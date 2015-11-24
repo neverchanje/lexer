@@ -40,6 +40,23 @@ in the input is considered matched and copied to the standard output.
 If the action is empty, then when the pattern is matched the input token is 
 simply discarded.
 
++ special directives which can be included within an action
+
+    - ECHO
+    
+    Copies the matched token to the lexer's output.
+    
+    - TODO: BEGIN
+    
+    - TODO: REJECT
+    
+    - An action consisting solely of a vertical bar (‘|’)
+    
+    Same as the action for the next rule.
+    
+    - If the action contains a ‘{’, then the action spans till the balancing ‘}’
+     is found, and the action may cross multiple lines.
+
 #### Comments
 
 Anything between '/*' and '*/' is considered a comment.
