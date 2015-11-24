@@ -7,17 +7,18 @@
 
 #include <boost/noncopyable.hpp>
 #include <iostream>
+#include <vector>
+
+
+namespace lexer {
 
 // Interface of a general scanner.
 class ILexer: boost::noncopyable {
  public:
 
-  ILexer(std::istream &input, std::ostream &output) = default;
+  ILexer(std::istream &input, std::ostream &output);
 
-  // Use std::cin and std::cout as default input and output stream.
-  ILexer() :
-      ILexer(std::cin, std::cout) {
-  }
+  ILexer() = default;
 
   virtual int Scan() = 0;
 
@@ -32,37 +33,6 @@ class ILexer: boost::noncopyable {
   std::string token_;
 };
 
-class InputBuffer;
-class Lexer: public ILexer {
- public:
-
-  Lexer(std::istream &in, std::ostream &out) :
-      in_(in),
-      out_(out),
-      buf_(in, InputBuffer::MAX_BUFFER_SIZE) {
-  }
-
-  int Scan() {
-
-  }
-
-  void Restart(std::istream &file) {
-
-  }
-
- private:
-
-  std::istream &in_;
-  std::ostream &out_;
-  InputBuffer buf_;
-
- private:
-
-  int getNextBuffer() {
-
-  }
-
-};
 
 /**
  * Buffer read from input file.
@@ -70,19 +40,15 @@ class Lexer: public ILexer {
 class InputBuffer: boost::noncopyable {
  public:
 
+  InputBuffer(std::istream &file, size_t size);
+
+  void flush();
+
   static const int MAX_BUFFER_SIZE = (1 << 16);
 
-  InputBuffer(std::istream &file, size_t size) :
-      bs_(file, size) {
-  }
-
-  void flush() {
-
-  }
+ private:
 
   static const char END_OF_BUFFER_CHAR = '\0';
-
- private:
 
   struct BufferState {
 
@@ -102,33 +68,14 @@ class InputBuffer: boost::noncopyable {
           EOF_PENDING
     };
 
-    BufferState(std::istream &file, size_t size) :
-        input_file(file),
-        bufsize(size),
-        pos(&buf[0]),
-        lineno(0),
-        column(0) {
-      buf[0] = END_OF_BUFFER_CHAR;
-      buf[1] = END_OF_BUFFER_CHAR;
-    }
+    BufferState(std::istream &file, size_t size);
 
     //Initialize or reinitialize the buffer.
-    void init_buf() {
-      /* We always need two end-of-buffer characters.  The first causes
-       * a transition to the end-of-buffer state.  The second causes
-       * a jam in that state.
-       */
-      buf[0] = END_OF_BUFFER_CHAR;
-      buf[1] = END_OF_BUFFER_CHAR;
-      pos = &buf[0];
-      bufstatus = Status::NEW;
-    }
+    void init_buf();
 
     std::istream &input_file;
-
-    char buf[bufsize + 2]; // +2 for EOB character.
-    char *pos;
-    const size_t bufsize;
+    std::vector<char> buf; //buf always has two EOB characters at the end.
+    size_t pos;
     unsigned int lineno, column;
     Status bufstatus;
   };
@@ -136,5 +83,31 @@ class InputBuffer: boost::noncopyable {
   BufferState bs_;
 };
 
+class Lexer: public ILexer {
+ public:
+
+  // Create an instante of Lexer by specifying the input and output stream.
+  Lexer(std::istream &in, std::ostream &out);
+
+  // Use std::cin and std::cout as default input and output stream.
+  Lexer();
+
+  int Scan();
+
+  void Restart(std::istream &file);
+
+ private:
+
+  std::istream &in_;
+  std::ostream &out_;
+  InputBuffer buf_;
+
+ private:
+
+  int getNextBuffer();
+
+};
+
+} //namespace lexer
 
 #endif //LEXER_LEXER_H
