@@ -6,7 +6,7 @@ definitions
 %%
 rules
 %% //user code section can be skipped.
-user code //
+user code
 ```
 
 #### Definitions 
@@ -64,11 +64,25 @@ Anything between '/*' and '*/' is considered a comment.
 #### Scanner
 
 + Scanning Routine
-yylex()
+Scan()
  
 + Tables 
 A number of tables for matching tokens.
 
 + Auxiliary
 A number of auxiliary routines and macros.
+
+#### TODO(MUST): Multiple Input Buffers
+Used in 'include'
+
+#### `<<EOF>>` End-of-File Rules
+
+#### Start Condition
+<STRING> means any rules whose pattern is prefixed with "STRING" will be activated.
+
++ inclusive start condition
+%s
+
++ exclusive start condition
+%x
 
