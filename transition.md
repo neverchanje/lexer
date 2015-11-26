@@ -1,11 +1,4 @@
 
-
-#### Start State
-StartState = 1
-
-#### NiL State
-NilState = 0
-
 #### NFA to DFA Algorithm *Subset Construction*: 
 ```
 {
@@ -15,7 +8,7 @@ NilState = 0
         Mark T.
         FOR EACH input symbol a {
             U = EpsClosure(move(T, a))
-            if(U is not in DStates) {
+            IF U is not in DStates {
                 Add U as an unmarked state to DStates.
             }
             DStates[T, a] = U.
@@ -30,14 +23,22 @@ NilState = 0
     Stack S.
     Push all states of T onto S.
     WHILE S is not empty {
-        Pop top element v from S.
+        Pop top element v off S.
         FOR EACH state v with an edge from u to v labeled epsilon {
             IF v is not in EpsClosure(T) {
                 Add v to EpsClosure(T)
-                push v onto S.
+                Push v onto S.
             }
         }
     }
 }
 ```
 
+#### Beginning States
+ 
+The beginning states are the epsilon closure of the first state.
+ 
+
+#### Positive Closure / Kleene Closure
+
+zero or more

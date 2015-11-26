@@ -3,3 +3,5 @@
 //
 
 #include "DFA.h"
+
+using namespace lexer;

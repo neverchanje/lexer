@@ -80,9 +80,15 @@ Used in 'include'
 #### Start Condition
 <STRING> means any rules whose pattern is prefixed with "STRING" will be activated.
 
-+ inclusive start condition
++ TODO: inclusive start condition
+```
 %s
+```
+rules with no start condition will also be active.
 
 + exclusive start condition
+```
 %x
+```
+only rules qualified with the start condition will be active.
 

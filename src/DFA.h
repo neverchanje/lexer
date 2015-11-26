@@ -3,27 +3,31 @@
 //
 
 #ifndef LEXER_DFA_H
-#define LEXER_DFA_H
+
+#include <NFA.h>
+
+namespace lexer {
 
 /**
  * Deterministic Finite Automata
  */
 class DFA {
-};
-
-class NFA {
 
  public:
 
-  // Construct the epsilon closure of the NFA.
-  void EpsClosure() {
-
+  //Equivalent with nfa.toDFA()
+  static DFA FromNFA(const NFA &nfa) {
+    return nfa.ToDFA();
   }
 
-  // Subset construction.
+ private:
 
+  DFA() = default;
+
+  std::vector<State> state_;
 
 };
 
+} // namespace lexer
 
 #endif //LEXER_DFA_H
