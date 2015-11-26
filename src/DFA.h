@@ -15,13 +15,13 @@ class DFA {
 
  public:
 
-  //Equivalent with nfa.toDFA()
   static DFA FromNFA(const NFA &nfa) {
     return nfa.ToDFA();
   }
 
  private:
 
+  // DFA is only allowed to be constructed by a NFA.
   DFA() = default;
 
   std::vector<State> state_;

@@ -40,7 +40,7 @@ class NFA {
 
   // Construct the epsilon closure of the set of NFA states T, and return the
   // result.
-  // Use Named-Return-Value-Optimization to reduce the copy times.
+  // We have Named-Return-Value-Optimization to reduce the copy times.
   EpsClosure GetEpsClosure(const std::vector<State> &T);
 
   // Subset construction algorithm.
@@ -50,12 +50,12 @@ class NFA {
 
   void AddTrans(State from, int sym, State to);
 
-  void Dump(State start);
+  void Dump();
 
  private:
 
-  // Transition tuple (State from, int symbol, State to)
-  std::unordered_map<State, std::vector<int, State> >machine_;
+  // Transition tuple (State from, State to, int symbol)
+  std::unordered_map<State, std::unordered_map<int, std::vector<State> > > machine_;
 
   std::vector<State> accepts_;
 
