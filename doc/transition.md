@@ -50,7 +50,7 @@ We assume that retrieving an element by a given key costs O(1).
 
 + **Design 1**
 ```
-std::unordered_map<State, std::unordered_map<State, int> > trans_;
+unordered_map<State, unordered_map<State, int> > trans_;
 ```
 
 Find an edge (from, sym, to): O(1)
@@ -59,7 +59,7 @@ Get all epsilon-transition out from a state : no exactly
 
 + **Design 2**
 ```
-std::unordered_map<State, std::unordered_map<int, vector<State> > > trans_;
+unordered_map<State, unordered_map<int, vector<State> > > trans_;
 ```
 
 Find an edge (from, sym, to): >O(1)
@@ -69,14 +69,27 @@ Get all epsilon-transition out from a state : exactly
 + **Design 3**
 
 ```
-std::unordered_map<State, std::unordered_map<int, State> > trans_;
-std::unordered_map<State, std::vector<State> > eps_trans_;
+unordered_map<State, unordered_map<int, State> > trans_;
+unordered_map<State, vector<State> > eps_trans_;
 // Add epsilon transition to eps_trans.
 // Create a new state `s` when there's an existed transition labelled `sym`.
 // Then add transition(from, SYM_EPSILON, s), and add transition(s, sym, to).
 ```
 
 Find an edge (from, sym, to) (non-epsilon-symbol sym): O(1)
+
+Find an edge (from, SYM_EPSILON, to) : >O(1)
+
+Get all epsilon-transition out from a state : exactly
+
++ **Design 4**
+
+```
+unordered_map<State, unordered_map<int, vector<State> > > trans1_;
+unordered_map<State, unordered_map<State, int> > trans2_;
+```
+
+Find an edge (from, sym, to): O(1)
 
 Get all epsilon-transition out from a state : exactly
 

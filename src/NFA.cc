@@ -15,7 +15,7 @@ EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) {
     State u = S.back();
     S.pop_back();
 
-    auto &tos = trans_[u][SYM_EPSILON];
+    auto &tos = trans1_[u][SYM_EPSILON];
     State v;
     for (auto it = tos.begin(); it != tos.end(); it++) {
       v = *it;
@@ -28,14 +28,15 @@ EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) {
 }
 
 void NFA::AddTrans(State from, int sym, State to) {
-  trans_[from][sym].push_back(to);
+  trans1_[from][sym].push_back(to);
+  trans2_[from][to] = sym;
 }
 
 void NFA::Dump() const {
   fprintf(stderr, "------- Begining of dumping the NFA. -------");
-  for (auto t1 = trans_.begin(); t1 != trans_.end(); t1++) {
-    for (auto t2 = (*t1).second.begin(); t2 != trans_.end(); t2++) {
-      for (auto t3 = (*t2).second.begin(); t3 != trans_.end(); t3++) {
+  for (auto t1 = trans1_.begin(); t1 != trans1_.end(); t1++) {
+    for (auto t2 = (*t1).second.begin(); t2 != trans1_.end(); t2++) {
+      for (auto t3 = (*t2).second.begin(); t3 != trans1_.end(); t3++) {
         fprintf(stderr, "%d: %d, %d\n", t2->first, t1->first, *t3);
       }
     }
@@ -52,21 +53,7 @@ State NFA::MakeState() {
   maxStateId_++;
   return stateId;
 }
-//
-//Machine NFA::MakeBranch(Machine first, Machine second) {
-////  State mach = MakeState();
-////  AddTrans(mach, SYM_EPSILON, first.start);
-////  AddTrans(mach, SYM_EPSILON, second.start);
-//}
-//
-//Machine NFA::MakeClosure(Machine mach) {
-//  // AddTrans(mach, SYM_EPSILON, mach);
-//  // return mach;
-//  return MakeOpt(MakePosClosure(mach));
-//}
-//
 
-//TODO: Optimization.
 Machine NFA::MakeOpt(Machine mach) {
   State start = MakeState();
   State final = MakeState();
@@ -76,13 +63,16 @@ Machine NFA::MakeOpt(Machine mach) {
   return Machine(start, final);
 }
 
-//State NFA::MakeOr(Machine first, Machine second) {
-//  return 0;
-//}
-//
-//State NFA::MakePosClosure(Machine mach) {
-//  return 0;
-//}
+Machine NFA::MakeOr(Machine first, Machine second) {
+  State start = MakeState();
+  State final = MakeState();
+  AddTrans(start, SYM_EPSILON, first.start);
+  AddTrans(start, SYM_EPSILON, second.start);
+  AddTrans(first.final, SYM_EPSILON, final);
+  AddTrans(second.final, SYM_EPSILON, final);
+  return Machine(start, final);
+}
+
 //
 //State NFA::MakeRep(int lb, int ub) {
 //  return 0;

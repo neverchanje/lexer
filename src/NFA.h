@@ -37,6 +37,8 @@ const int SYM_EPSILON = 257;
  */
 class NFA: boost::noncopyable {
 
+// TODO: Optimization: Merge the states which have only epsilon transitions.
+
  public:
 
   /**
@@ -84,16 +86,13 @@ class NFA: boost::noncopyable {
   // Make a new state and add it into the NFA.
   State MakeState();
 
-  // Make a machine that branches to two machines.
-  Machine MakeBranch(Machine first, Machine second);
-
   // Convert a machine into closure.
   Machine MakeClosure(Machine mach);
 
   // Make a machine optional.
   Machine MakeOpt(Machine mach);
 
-  State MakeOr(Machine first, Machine second);
+  Machine MakeOr(Machine first, Machine second);
 
   Machine MakePosClosure(Machine mach);
 
@@ -102,7 +101,8 @@ class NFA: boost::noncopyable {
  private:
 
   // Transition tuple (State from, State to, int symbol)
-  std::unordered_map<State, std::unordered_map<int, std::vector<State> > > trans_;
+  std::unordered_map<State, std::unordered_map<int, std::vector<State> > > trans1_;
+  std::unordered_map<State, std::unordered_map<State, int> > trans2_;
 
   std::vector<State> accepts_;
 
