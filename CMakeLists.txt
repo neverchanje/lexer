@@ -15,7 +15,7 @@ set(CXX_FLAGS
 
 # GTest will cause recusive setting in CMake when you try to reset the
 # location of the clang. So I use the default compiler, Apple Clang here,
-# which has slightly differences with official clang.
+# which has slight differences with the official clang.
 #
 # set(CMAKE_CXX_COMPILER "/usr/local/llvm/bin/clang++")
 

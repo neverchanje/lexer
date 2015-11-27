@@ -42,38 +42,52 @@ The beginning states are the epsilon closure of the first state.
 
 zero or more
 
-#### Data structure of a Finite Automata
+#### Data structure of an NFA
 
 Transition tuple (State from, State to, int symbol)
 
 We assume that retrieving an element by a given key costs O(1).
 
-+ Design 1
++ **Design 1**
 ```
-std::unordered_map<State, std::unordered_map<State, int> > machine_;
+std::unordered_map<State, std::unordered_map<State, int> > trans_;
 ```
-Traverse all edges out from `from`: exactly
-Traverse all edges out from `from` labeled `sym`: no exactly
-Traverse all edges out from `from` to `to`: exactly
 
-+ Design 2
-```
-std::unordered_map<State, std::unordered_map<int, std::vector<State> > > machine_;
-```
-Traverse all edges out from `from`: exactly
-Traverse all edges out from `from` labeled `sym`: exactly
-Traverse all edges out from `from` to `to`: no exactly
+Find an edge (from, sym, to): O(1)
 
-+ Design 3
-```
-struct Edge {
-    std::unordered_map<int, State> transTo.
-    State s;
-}
-std::unordered_map<State, Edge> machine_;
-```
-Each Node stores the edges trans out from it.
+Get all epsilon-transition out from a state : no exactly
 
-Traverse all edges out from `from`: exactly
-Traverse all edges out from `from` labeled `sym`: exactly
-Traverse all edges out from `from` to `to`: no exactly
++ **Design 2**
+```
+std::unordered_map<State, std::unordered_map<int, vector<State> > > trans_;
+```
+
+Find an edge (from, sym, to): >O(1)
+
+Get all epsilon-transition out from a state : exactly
+
++ **Design 3**
+
+```
+std::unordered_map<State, std::unordered_map<int, State> > trans_;
+std::unordered_map<State, std::vector<State> > eps_trans_;
+// Add epsilon transition to eps_trans.
+// Create a new state `s` when there's an existed transition labelled `sym`.
+// Then add transition(from, SYM_EPSILON, s), and add transition(s, sym, to).
+```
+
+Find an edge (from, sym, to) (non-epsilon-symbol sym): O(1)
+
+Get all epsilon-transition out from a state : exactly
+
+#### Construction of an NFA from regular expression
+
++ `r = s | t`
+
++ `r = st `
+
++ `r = s*`
+
++ `r = s+`
+
++ `r = (s)`

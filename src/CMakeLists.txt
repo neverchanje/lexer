@@ -4,6 +4,8 @@ set(LEXER_SRC
         DFA.h DFA.cc
         NFA.h NFA.cc
         SymbolTable.h
+        CharClass.h CharClass.cc
+        LexerDef.h
 )
 
 add_executable(lexer ${LEXER_SRC})

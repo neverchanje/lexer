@@ -8,10 +8,13 @@
 #include <set>
 #include <vector>
 #include <unordered_map>
+#include <boost/noncopyable.hpp>
+
+#include "LexerDef.h"
 
 namespace lexer {
 
-typedef int State;
+class DFA;
 
 /**
  * Definition of epsilon closure in flex:
@@ -29,14 +32,35 @@ typedef std::set<State> EpsClosure;
  */
 const int SYM_EPSILON = 257;
 
-class DFA;
-
 /**
  * Non-deterministic Finite Automata
  */
-class NFA {
+class NFA: boost::noncopyable {
 
  public:
+
+  /**
+   * Each Machine is a NFA constructed by a regular expression.
+   *
+   * The construction of a Machine can be divided into the construction of
+   * smaller machines, which are constructed by the constituent subexpressions
+   * of the given expression.
+   */
+  struct Machine {
+    // Each Machine contains only single start and final state.
+    State start, final;
+
+    Machine(State st, State fn) :
+        start(st),
+        final(fn) {
+    }
+  };
+
+ public:
+
+  NFA() :
+      maxStateId_(0) {
+  }
 
   // Construct the epsilon closure of the set of NFA states T, and return the
   // result.
@@ -50,14 +74,40 @@ class NFA {
 
   void AddTrans(State from, int sym, State to);
 
-  void Dump();
+  void AddAccept(State accept);
+
+  // Debugging method to write out all of the transitions in the NFA.
+  void Dump() const;
+
+  int NumOfStates() const;
+
+  // Make a new state and add it into the NFA.
+  State MakeState();
+
+  // Make a machine that branches to two machines.
+  Machine MakeBranch(Machine first, Machine second);
+
+  // Convert a machine into closure.
+  Machine MakeClosure(Machine mach);
+
+  // Make a machine optional.
+  Machine MakeOpt(Machine mach);
+
+  State MakeOr(Machine first, Machine second);
+
+  Machine MakePosClosure(Machine mach);
+
+  State MakeRep(int lb, int ub);
 
  private:
 
   // Transition tuple (State from, State to, int symbol)
-  std::unordered_map<State, std::unordered_map<int, std::vector<State> > > machine_;
+  std::unordered_map<State, std::unordered_map<int, std::vector<State> > > trans_;
 
   std::vector<State> accepts_;
+
+  // It also indicates the number of current states.
+  int maxStateId_;
 
 };
 

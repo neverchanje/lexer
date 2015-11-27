@@ -92,3 +92,9 @@ rules with no start condition will also be active.
 ```
 only rules qualified with the start condition will be active.
 
+#### Character Class 
+```
+[abc] // a character class 
+```
+
+#### Equivalence Class

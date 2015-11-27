@@ -1,6 +1,6 @@
 # lexer
 
-`lexer` is a simple lexical analyser.
+`lexer` is a tool for generating simple lexical analyser.
 
 For public methods of a class, I usually capitalize the first character of
 the methods' name, which can be distinguished from private methods, and 
