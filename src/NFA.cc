@@ -73,12 +73,6 @@ Machine NFA::MakeOr(Machine first, Machine second) {
   return Machine(start, final);
 }
 
-//
-//State NFA::MakeRep(int lb, int ub) {
-//  return 0;
-//}
-//
-
 int NFA::NumOfStates() const {
   return maxStateId_;
 }

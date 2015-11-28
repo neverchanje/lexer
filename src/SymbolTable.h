@@ -15,6 +15,14 @@ struct Def {
   int int_def;
 };
 
-typedef std::unordered_map<Sym, Def> SymbolTable;
+class SymbolTable {
+ public:
+
+  SymbolTable() = default;
+
+ private:
+  std::unordered_map<Sym, Def> table_;
+};
+
 
 #endif //LEXER_SYMBOLTABLE_H

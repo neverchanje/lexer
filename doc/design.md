@@ -75,12 +75,12 @@ A number of auxiliary routines and macros.
 #### TODO(MUST): Multiple Input Buffers
 Used in 'include'
 
-#### `<<EOF>>` End-of-File Rules
+#### `<<EOF>>` End-of-FileInput Rules
 
 #### Start Condition
 <STRING> means any rules whose pattern is prefixed with "STRING" will be activated.
 
-+ TODO: inclusive start condition
++ TODO(NOT): inclusive start condition
 ```
 %s
 ```
@@ -92,9 +92,24 @@ rules with no start condition will also be active.
 ```
 only rules qualified with the start condition will be active.
 
-#### Character Class 
+#### Character Class / CCL
 ```
 [abc] // a character class 
 ```
 
-#### Equivalence Class
++ Character Class Expression / CCE
+```
+         [:alnum:] [:alpha:] [:blank:]
+         [:cntrl:] [:digit:] [:graph:]
+         [:lower:] [:print:] [:punct:]
+         [:space:] [:upper:] [:xdigit:]
+```
+
+#### Repeat operator {}
+
+POSIX and AT&T lex place the
+precedence of the repeat operator, {}, below that of concatenation.
+Thus, ab{3} is ababab.  Most other POSIX utilities use an Extended
+Regular Expression (ERE) precedence that has the repeat operator
+higher than concatenation.  This causes ab{3} to yield abbb.
+

@@ -4,7 +4,7 @@
 
 #ifndef LEXER_DFA_H
 
-#include <NFA.h>
+#include "NFA.h"
 
 namespace lexer {
 
@@ -21,10 +21,10 @@ class DFA {
 
  private:
 
-  // DFA is only allowed to be constructed by a NFA.
+  // DFA is only allowed to be constructed by an NFA.
   DFA() = default;
 
-  std::vector<State> state_;
+  std::unordered_map<State, std::unordered_map<int, State> > trans_;
 
 };
 

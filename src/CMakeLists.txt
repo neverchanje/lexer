@@ -6,9 +6,13 @@ set(LEXER_SRC
         SymbolTable.h
         CharClass.h CharClass.cc
         LexerDef.h
-)
+        InputBuffer.h InputBuffer.cc
+        Rule.h Rule.cc
+        FileInput.h FileInput.cc
+        )
 
 add_executable(lexer ${LEXER_SRC})
 target_link_libraries(lexer ${Boost_LIBRARIES})
 
-add_subdirectory(logger)
+include_directories(lib)
+add_subdirectory(lib)

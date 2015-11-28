@@ -22,8 +22,9 @@ class DFA;
  * number of epsilon transitions, which themselves do not have epsilon
  * transitions going out, unioned with the set of states which have non-null
  * accepting numbers.
- * Since find and insert are the most usual operations in the manipulation
- * of EpsClosure, we use std::set, which is time-efficient in both two.
+ *
+ * Since searching and insertion are the most usual operations in the manipulation
+ * of EpsClosure, we use std::set, which is time-efficient in both of two.
  */
 typedef std::set<State> EpsClosure;
 
@@ -76,8 +77,6 @@ class NFA: boost::noncopyable {
 
   void AddTrans(State from, int sym, State to);
 
-  void AddAccept(State accept);
-
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
 
@@ -96,20 +95,19 @@ class NFA: boost::noncopyable {
 
   Machine MakePosClosure(Machine mach);
 
-  State MakeRep(int lb, int ub);
-
  private:
 
   // Transition tuple (State from, State to, int symbol)
   std::unordered_map<State, std::unordered_map<int, std::vector<State> > > trans1_;
   std::unordered_map<State, std::unordered_map<State, int> > trans2_;
 
-  std::vector<State> accepts_;
-
   // It also indicates the number of current states.
   int maxStateId_;
 
 };
+
+// singleton
+NFA Global_NFA;
 
 } // namespace lexer
 

@@ -4,5 +4,9 @@
 
 #include "Lexer.h"
 
+using namespace lexer;
+
 int main() {
+  Lexer l;
+  while(l.Scan()) { }
 }
