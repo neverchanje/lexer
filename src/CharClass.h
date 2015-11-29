@@ -6,8 +6,7 @@
 #define LEXER_CHARCLASS_H
 
 #include <bitset>
-
-#include "LexerDef.h"
+#include "NFA.h"
 
 namespace lexer {
 
@@ -17,14 +16,19 @@ namespace lexer {
 class CharClass {
  public:
 
+  typedef NFA::Machine Machine;
+
   CharClass() :
       negated_(false) {
   }
 
   CharClass(const std::string& set);
 
-  // Add a single character c to a CharClass.
+  // Add a single character c into a CharClass.
   void Add(char c);
+
+  // Add characters in range of [lb, ub] into CharaClass.
+  void AddRange(char lb, char ub);
 
   // Check if the CharClass contains the character c.
   bool Contains(char c) const;
@@ -35,6 +39,10 @@ class CharClass {
   // Debugging method to write out all of the characters in
   // CharClass.
   void Dump() const;
+
+  Machine AddToNFA(NFA &nfa);
+
+  Machine AddToNFA(NFA &nfa, State st, State fn);
 
  private:
 

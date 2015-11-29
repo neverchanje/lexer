@@ -6,7 +6,7 @@
 
 using namespace lexer;
 
-EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) {
+EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) const {
   std::vector<State> S = T;
 
   EpsClosure E;
@@ -57,8 +57,8 @@ State NFA::MakeState() {
 Machine NFA::MakeOpt(Machine mach) {
   State start = MakeState();
   State final = MakeState();
-  AddTrans(start, SYM_EPSILON, mach.start);
-  AddTrans(mach.final, SYM_EPSILON, final);
+  AddTrans(start, SYM_EPSILON, mach.Start);
+  AddTrans(mach.Final, SYM_EPSILON, final);
   AddTrans(start, SYM_EPSILON, final);
   return Machine(start, final);
 }
@@ -66,10 +66,10 @@ Machine NFA::MakeOpt(Machine mach) {
 Machine NFA::MakeOr(Machine first, Machine second) {
   State start = MakeState();
   State final = MakeState();
-  AddTrans(start, SYM_EPSILON, first.start);
-  AddTrans(start, SYM_EPSILON, second.start);
-  AddTrans(first.final, SYM_EPSILON, final);
-  AddTrans(second.final, SYM_EPSILON, final);
+  AddTrans(start, SYM_EPSILON, first.Start);
+  AddTrans(start, SYM_EPSILON, second.Start);
+  AddTrans(first.Final, SYM_EPSILON, final);
+  AddTrans(second.Final, SYM_EPSILON, final);
   return Machine(start, final);
 }
 
@@ -77,8 +77,11 @@ int NFA::NumOfStates() const {
   return maxStateId_;
 }
 
-void NFA::AddAccept(State accept, const AcceptData &data) {
+State NFA::AddAccept(State state, const AcceptData &data) {
+  State accept = MakeState();
+  AddTrans(state, SYM_EPSILON, accept);
   accepts_[accept] = data;
+  return accept;
 }
 
 Machine NFA::MakeClosure(Machine mach) {
@@ -86,6 +89,6 @@ Machine NFA::MakeClosure(Machine mach) {
 }
 
 Machine NFA::MakePosClosure(Machine mach) {
-  AddTrans(mach.final, SYM_EPSILON, mach.start);
+  AddTrans(mach.Final, SYM_EPSILON, mach.Start);
   return mach;
 }

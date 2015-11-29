@@ -52,24 +52,31 @@ class NFA: boost::noncopyable {
    */
   struct Machine {
     // Each Machine contains only single start and final state.
-    State start, final;
+    State Start, Final;
 
     Machine(State st, State fn) :
-        start(st),
-        final(fn) {
+        Start(st),
+        Final(fn) {
+    }
+
+    Machine(NFA &nfa) :
+        Start(nfa.MakeState()),
+        Final(nfa.MakeState()) {
     }
   };
 
  public:
 
   NFA() :
-      maxStateId_(0) {
+      start_(0),
+      final_(1),
+      maxStateId_(2) {
   }
 
   // Construct the epsilon closure of the set of NFA states T, and return the
   // result.
   // We have Named-Return-Value-Optimization to reduce the copy times.
-  EpsClosure GetEpsClosure(const std::vector<State> &T);
+  EpsClosure GetEpsClosure(const std::vector<State> &T) const;
 
   // Subset construction algorithm.
   // We temporarily assume that this method will not modify the internal structure
@@ -78,7 +85,7 @@ class NFA: boost::noncopyable {
 
   void AddTrans(State from, int sym, State to);
 
-  void AddAccept(State accept, const AcceptData& data);
+  State AddAccept(State state, const AcceptData &data);
 
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
@@ -88,7 +95,7 @@ class NFA: boost::noncopyable {
   // Make a new state and add it into the NFA.
   State MakeState();
 
-  // Convert a machine into closure.
+  // Convert a machine into a closure.
   Machine MakeClosure(Machine mach);
 
   // Make a machine optional.
@@ -98,6 +105,10 @@ class NFA: boost::noncopyable {
 
   Machine MakePosClosure(Machine mach);
 
+  State Start() { return start_; }
+  State Final() { return final_; }
+  Machine Machine() { return Machine(start_, final_); }
+
  private:
 
   // Transition tuple (State from, State to, int symbol)
@@ -106,6 +117,8 @@ class NFA: boost::noncopyable {
 
   // It also indicates the number of current states.
   int maxStateId_;
+
+  State start_, final_;
 
   std::unordered_map<State, AcceptData> accepts_;
 

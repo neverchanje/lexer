@@ -43,3 +43,26 @@ CharClass::CharClass(const std::string &set) {
     Add(set[i]);
   }
 }
+
+Machine CharClass::AddToNFA(NFA &nfa) {
+  return AddToNFA(nfa, nfa.MakeState(), nfa.MakeState());
+}
+
+Machine CharClass::AddToNFA(NFA &nfa, State st, State fn) {
+  Machine ccl(st, fn);
+  State tmp;
+  for (int i = 0; i < CHAR_SIZE; i++) {
+    if (charset_.test(i)) {
+      tmp = nfa.MakeState();
+      nfa.AddTrans(ccl.Start, i, tmp);
+      nfa.AddTrans(tmp, SYM_EPSILON, ccl.Final);
+    }
+  }
+  return ccl;
+}
+
+void CharClass::AddRange(char lb, char ub) {
+  for (char i = lb; i <= ub; i++) {
+    Add(i);
+  }
+}

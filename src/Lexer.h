@@ -12,7 +12,11 @@ namespace lexer {
 
 class Lexer: boost::noncopyable {
  public:
+
  private:
+
+  typedef NFA::Machine Machine;
+
   // Constructing the NFA used in lexer from regular expressions.
   // The details of the conversion can be found in doc/lexer.md.
   void initNFA();
@@ -22,12 +26,15 @@ class Lexer: boost::noncopyable {
   void addRuleSect();
   // Add rules in code section.
   void addCodeSect();
+
  private:
 
   void initDFA();
-  void genTable();
+
  private:
+
   NFA nfa_;
+
 };
 
 } // namespace lexer
