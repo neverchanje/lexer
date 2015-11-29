@@ -14,7 +14,7 @@
 namespace lexer {
 
 /**
- * Buffer read from input file and will be write to the output file.
+ * Buffer read from input_ file and will be write to the output file.
  */
 struct Buffer {
 
@@ -49,6 +49,10 @@ class File: boost::noncopyable {
     fclose(file_);
   }
 
+  const FILE *GetFilePtr() {
+    return file_;
+  }
+
  protected:
   FILE *file_;
 };
@@ -57,7 +61,7 @@ class FileInput: public File {
 
  public:
 
-  // default input: stdin
+  // default input_: stdin
   FileInput() :
       file_(stdin),
       buf_(Buffer::DEFAULT_BUFFER_SIZE) {

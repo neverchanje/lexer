@@ -1,14 +1,14 @@
 
 set(LEXER_SRC
         Lexer.h Lexer.cc
+        Scanner.h Scanner.cc
         DFA.h DFA.cc
         NFA.h NFA.cc
         SymbolTable.h
         CharClass.h CharClass.cc
         LexerDef.h
-        InputBuffer.h InputBuffer.cc
         Rule.h Rule.cc
-        FileInput.h FileInput.cc
+        File.h
         )
 
 add_executable(lexer ${LEXER_SRC})

@@ -77,8 +77,8 @@ int NFA::NumOfStates() const {
   return maxStateId_;
 }
 
-void NFA::AddAccept(State accept) {
-  accepts_.push_back(accept);
+void NFA::AddAccept(State accept, const AcceptData &data) {
+  accepts_[accept] = data;
 }
 
 Machine NFA::MakeClosure(Machine mach) {

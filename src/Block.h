@@ -7,10 +7,21 @@
 
 #include <string>
 
+/**
+ *
+ */
 class Block {
 
- private:
+  Block() :
+      indent_(0) {
+  }
 
+  void IndentUp() { indent_++; }
+  void IndentDown() { indent_--; }
+  int IndentLevel() { return indent_; }
+
+ private:
+  int indent_;
 };
 
 #endif //LEXER_BLOCK_H

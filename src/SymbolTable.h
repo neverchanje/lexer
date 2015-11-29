@@ -11,8 +11,8 @@
 typedef std::string Sym;
 
 struct Def {
-  std::string str_def;
-  int int_def;
+  std::string StrDef;
+  int IntDef;
 };
 
 class SymbolTable {

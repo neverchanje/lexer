@@ -21,6 +21,8 @@ class CharClass {
       negated_(false) {
   }
 
+  CharClass(const std::string& set);
+
   // Add a single character c to a CharClass.
   void Add(char c);
 

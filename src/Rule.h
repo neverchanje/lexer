@@ -7,19 +7,19 @@
 
 #include "LexerDef.h"
 #include "NFA.h"
+#include "Block.h"
 
 namespace lexer {
 
 struct Pattern {
-  NFA::Machine mach;
-  bool bol;
-  size_t length; //length of the text matched by this pattern.
+  NFA::Machine Mach;
+  std::string Name;
 };
 
 class Rule {
  public:
 
-  class Action {
+  class Action: public Block {
 
   };
 

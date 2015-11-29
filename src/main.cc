@@ -6,7 +6,6 @@
 
 using namespace lexer;
 
-int main() {
-  Lexer l;
-  while(l.Scan()) { }
+int main(int argc, char **argv) {
+
 }

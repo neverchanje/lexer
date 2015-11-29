@@ -9,6 +9,7 @@
 #include <vector>
 #include <unordered_map>
 #include <boost/noncopyable.hpp>
+#include <string>
 
 #include "LexerDef.h"
 
@@ -77,6 +78,8 @@ class NFA: boost::noncopyable {
 
   void AddTrans(State from, int sym, State to);
 
+  void AddAccept(State accept, const AcceptData& data);
+
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
 
@@ -104,10 +107,9 @@ class NFA: boost::noncopyable {
   // It also indicates the number of current states.
   int maxStateId_;
 
-};
+  std::unordered_map<State, AcceptData> accepts_;
 
-// singleton
-NFA Global_NFA;
+};
 
 } // namespace lexer
 

@@ -5,7 +5,7 @@
 definitions
 %%
 rules
-%% //user code section can be skipped.
+%%
 user code
 ```
 
@@ -24,7 +24,7 @@ name definition
 
 (regular expressions, C codes)
 
-The rules section of the flex input contains a series of rules of the form:
+The rules section of the flex input_ contains a series of rules of the form:
 
 ```
 pattern   action
@@ -33,11 +33,11 @@ pattern   action
 + default rules
 
 If no match is found, then the default rule is executed: the next character
-in the input is considered matched and copied to the standard output.
+in the input_ is considered matched and copied to the standard output.
 
 + default actions 
 
-If the action is empty, then when the pattern is matched the input token is 
+If the action is empty, then when the pattern is matched the input_ token is 
 simply discarded.
 
 + special directives which can be included within an action

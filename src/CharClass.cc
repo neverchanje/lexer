@@ -28,7 +28,7 @@ void CharClass::Dump() const {
   bool has = false;
   for (size_t i = 0; i < CHAR_SIZE; i++) {
     if (charset_.test(i)) {
-      if(has)
+      if (has)
         fprintf(stderr, ", ");
       else
         has = true;
@@ -36,4 +36,10 @@ void CharClass::Dump() const {
     }
   }
   fprintf(stderr, "]\n");
+}
+
+CharClass::CharClass(const std::string &set) {
+  for (int i = 0; i < set.length(); i++) {
+    Add(set[i]);
+  }
 }

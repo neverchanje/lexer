@@ -6,7 +6,7 @@
     Initialize states in DStates to unmarked.
     WHILE there's an unmarked states T in DStates {
         Mark T.
-        FOR EACH input symbol a {
+        FOR EACH input_ symbol a {
             U = EpsClosure(move(T, a))
             IF U is not in DStates {
                 Add U as an unmarked state to DStates.
