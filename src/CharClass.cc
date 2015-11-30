@@ -6,6 +6,8 @@
 
 using namespace lexer;
 
+typedef CharClass::Machine Machine;
+
 void CharClass::Add(char c) {
   charset_.set(static_cast<size_t>(c));
 }

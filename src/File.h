@@ -63,8 +63,8 @@ class FileInput: public File {
 
   // default input_: stdin
   FileInput() :
-      file_(stdin),
       buf_(Buffer::DEFAULT_BUFFER_SIZE) {
+    file_ = stdin; // this assignment cannot be place in initializer list.
   }
 
   // Read the content in filename and initialize the buffer size.
@@ -73,11 +73,11 @@ class FileInput: public File {
     file_ = fopen(filename, "r");
   }
 
-  void Read(size_t size) {
-    fread(buf_.buf.data(), size, 1, file_);
+  size_t Read(size_t size) {
+    return fread(buf_.buf.data(), 1, size, file_);
   }
 
-  Buffer &GetBuffer() {
+  Buffer &GetBufferLval() {
     return buf_;
   }
 
@@ -94,8 +94,8 @@ class FileOutput: public File {
  public:
 
   // default output: stdout
-  FileOutput() :
-      file_(stdout) {
+  FileOutput() {
+    file_ = stdout;
   }
 
   FileOutput(const char *filename) {
@@ -103,8 +103,7 @@ class FileOutput: public File {
   }
 
   size_t Write(Buffer &buf, size_t size) {
-    size_t writen = fwrite(buf.buf.data(), size, 1, file_);
-    return writen;
+    return fwrite(buf.buf.data(), 1, size, file_);
   }
 };
 

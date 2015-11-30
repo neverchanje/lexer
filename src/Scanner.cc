@@ -6,7 +6,7 @@
 
 using namespace lexer;
 
-int Scanner::Scan() {
+bool Scanner::Scan() {
   while (true) { //loops until an end-of-file character is reached.
 
   }

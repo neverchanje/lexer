@@ -8,5 +8,6 @@
 using namespace lexer;
 
 int main(int argc, char **argv) {
-
+  Lexer l;
+  l.Scan();
 }

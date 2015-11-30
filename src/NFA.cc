@@ -6,7 +6,11 @@
 
 using namespace lexer;
 
-EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) const {
+typedef NFA::Machine Machine;
+
+EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) {
+  // Since retrieving from unordered_map requires modification of the map,
+  // this method cannot mark const.
   std::vector<State> S = T;
 
   EpsClosure E;
@@ -34,18 +38,13 @@ void NFA::AddTrans(State from, int sym, State to) {
 
 void NFA::Dump() const {
   fprintf(stderr, "------- Begining of dumping the NFA. -------");
-  for (auto t1 = trans1_.begin(); t1 != trans1_.end(); t1++) {
-    for (auto t2 = (*t1).second.begin(); t2 != trans1_.end(); t2++) {
-      for (auto t3 = (*t2).second.begin(); t3 != trans1_.end(); t3++) {
-        fprintf(stderr, "%d: %d, %d\n", t2->first, t1->first, *t3);
-      }
+  for (auto t1 = trans2_.begin(); t1 != trans2_.end(); t1++) {
+    for (auto t2 = (*t1).second.begin(); t2 != (*t1).second.end(); t2++) {
+      fprintf(stderr, "<from:%d, sym:%d, to:%d>\n",
+              (*t1).first, (*t2).first, (*t2).second);
     }
   }
   fprintf(stderr, "------- Ending of dumping the NFA. -------\n");
-}
-
-DFA NFA::ToDFA() const {
-
 }
 
 State NFA::MakeState() {

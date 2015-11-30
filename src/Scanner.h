@@ -2,8 +2,8 @@
 // Created by neverchanje on 11/20/15.
 //
 
-#ifndef LEXER_LEXER_H
-#define LEXER_LEXER_H
+#ifndef LEXER_SCANNER_H
+#define LEXER_SCANNER_H
 
 #include <boost/noncopyable.hpp>
 #include <string>
@@ -16,10 +16,11 @@ class Scanner: boost::noncopyable {
 
  public:
 
-  // Use stdin as default file input stream.
+  // Uses stdin as default file input stream.
   Scanner() = default;
 
-  virtual int Scan() = 0;
+  // Returns false if an eof is hit.
+  virtual bool Scan() = 0;
 
   // The token corresponding to the matched pattern.
   const char *TokenData() const { return token_.data(); }
@@ -32,4 +33,4 @@ class Scanner: boost::noncopyable {
 
 } //namespace lexer
 
-#endif //LEXER_LEXER_H
+#endif //LEXER_SCANNER_H

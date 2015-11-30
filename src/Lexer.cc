@@ -17,7 +17,7 @@ void Lexer::addDefSect() {
   //---- add rule of NAME into NFA ---
   // NAME <= [_a-zA-Z][a-zA-Z0-9_-]*
 
-  Machine m = nfa_.Machine();
+  Machine m = nfa_.Mach();
   State mid = nfa_.MakeState();
 
   CharClass nccl1;
@@ -41,5 +41,20 @@ void Lexer::addRuleSect() {
 }
 
 void Lexer::addCodeSect() {
+
+}
+
+bool Lexer::Scan() {
+  input_.Read(Buffer::DEFAULT_BUFFER_SIZE);
+  Buffer& buf = input_.GetBufferLval();
+  printf("%s\n", buf.buf.data());
+  return true;
+}
+
+void Lexer::Gen() {
+
+}
+
+void Lexer::initDFA() {
 
 }

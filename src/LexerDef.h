@@ -6,6 +6,7 @@
 #define LEXER_LEXERDEF_H
 
 #include <functional>
+#include <string>
 
 namespace lexer {
 

@@ -21,7 +21,6 @@ class Generator {
 
  protected:
   FileOutput output_;
-  Buffer &buf_;
 };
 
 } //namespace lexer

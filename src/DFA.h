@@ -15,9 +15,9 @@ class DFA {
 
  public:
 
-  static DFA FromNFA(const NFA &nfa) {
-    return nfa.ToDFA();
-  }
+//  static DFA FromNFA(const NFA &nfa) {
+//    //return nfa.ToDFA();
+//  }
 
  private:
 

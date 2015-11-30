@@ -7,9 +7,10 @@ set(LEXER_SRC
         SymbolTable.h
         CharClass.h CharClass.cc
         LexerDef.h
-        Rule.h Rule.cc
+#        Rule.h Rule.cc
         File.h
         Generator.h Generator.cc
+        main.cc
         )
 
 add_executable(lexer ${LEXER_SRC})

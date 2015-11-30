@@ -8,10 +8,19 @@
 #include <boost/noncopyable.hpp>
 #include "NFA.h"
 #include "Scanner.h"
+#include "Generator.h"
 
 namespace lexer {
 
-class Lexer {
+class Lexer: public Scanner,
+             public Generator {
+ public:
+
+  Lexer() = default;
+
+  bool Scan();
+
+  void Gen();
 
  private:
 
