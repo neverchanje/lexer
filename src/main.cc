@@ -3,6 +3,7 @@
 //
 
 #include "Lexer.h"
+#include "Scanner.h"
 
 using namespace lexer;
 

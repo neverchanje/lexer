@@ -6,26 +6,27 @@
 #define LEXER_LEXER_H
 
 #include <boost/noncopyable.hpp>
-#include <iostream>
+#include <string>
 #include "File.h"
 
 namespace lexer {
 
-class Scanner:  boost::noncopyable {
+// Base class of a general scanner.
+class Scanner: boost::noncopyable {
+
  public:
 
-  //Use stdin and stdout as default file input stream and output stream.
-  Scanner();
+  // Use stdin as default file input stream.
+  Scanner() = default;
 
-  int Scan();
+  virtual int Scan() = 0;
 
   // The token corresponding to the matched pattern.
   const char *TokenData() const { return token_.data(); }
   size_t TokenLen() const { return token_.length(); }
 
- private:
+ protected:
   FileInput input_;
-  FileOutput output_;
   std::string token_;
 };
 

@@ -6,12 +6,12 @@
 #define LEXER_LEXER_H
 
 #include <boost/noncopyable.hpp>
-#include <NFA.h>
+#include "NFA.h"
+#include "Scanner.h"
 
 namespace lexer {
 
-class Lexer: boost::noncopyable {
- public:
+class Lexer {
 
  private:
 
@@ -32,9 +32,7 @@ class Lexer: boost::noncopyable {
   void initDFA();
 
  private:
-
   NFA nfa_;
-
 };
 
 } // namespace lexer

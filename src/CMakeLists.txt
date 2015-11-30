@@ -9,6 +9,7 @@ set(LEXER_SRC
         LexerDef.h
         Rule.h Rule.cc
         File.h
+        Generator.h Generator.cc
         )
 
 add_executable(lexer ${LEXER_SRC})

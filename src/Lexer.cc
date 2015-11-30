@@ -34,7 +34,6 @@ void Lexer::addDefSect() {
   nccl2.Add('-');
   nccl2.AddToNFA(nfa_, mid, m.Final);
   nfa_.MakeClosure(Machine(mid, m.Final));
-
 }
 
 void Lexer::addRuleSect() {
@@ -44,8 +43,3 @@ void Lexer::addRuleSect() {
 void Lexer::addCodeSect() {
 
 }
-
-void Lexer::initDFA() {
-
-}
-
