@@ -45,9 +45,7 @@ void Lexer::addCodeSect() {
 }
 
 bool Lexer::Scan() {
-  input_.Read(Buffer::DEFAULT_BUFFER_SIZE);
-  Buffer& buf = input_.GetBufferLval();
-  printf("%s\n", buf.buf.data());
+
   return true;
 }
 

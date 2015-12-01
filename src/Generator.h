@@ -14,8 +14,9 @@ class Generator {
 
  public:
 
-  // Use stdout as default file output stream.
   Generator() = default;
+
+  void SetOutputFile(const char *file) { output_.Reset(file); }
 
   virtual void Gen() = 0;
 

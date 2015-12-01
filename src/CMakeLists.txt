@@ -1,15 +1,15 @@
 
 set(LEXER_SRC
         Lexer.h Lexer.cc
-        Scanner.h Scanner.cc
+        Scanner.h
         DFA.h DFA.cc
         NFA.h NFA.cc
         SymbolTable.h
         CharClass.h CharClass.cc
         LexerDef.h
 #        Rule.h Rule.cc
-        File.h
-        Generator.h Generator.cc
+        File.h File.cc
+        Generator.h
         main.cc
         )
 

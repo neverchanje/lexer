@@ -14,29 +14,29 @@
 namespace lexer {
 
 /**
- * Buffer read from input_ file and will be write to the output file.
+ * Buffer read from input file and will be write to the output file.
  */
 struct Buffer {
-
   static const size_t DEFAULT_BUFFER_SIZE = (1 << 16);
-
   static const char END_OF_BUFFER_CHAR = '\0';
+  // static const size_t MAX_BUFFER_SIZE = std::numeric_limit<int>::max();
+  // static const double BUFFER_GROW_FACTOR = 1.5;
 
-  typedef std::vector<char>::iterator Iterator;
-
+  // The internal buffer array where the data is stored.
   std::vector<char> buf;
 
-  Iterator pos;
+  // The current position in the buffer.
+  size_t pos;
 
+  // The line number and column number of current position.
   unsigned int lineno, column;
 
-  Buffer(size_t size) :
-      buf(size),
-      pos(buf.begin()),
-      lineno(0),
-      column(0) {
-    buf[0] = END_OF_BUFFER_CHAR;
-  }
+  Buffer(size_t size);
+  Buffer() :
+      Buffer(DEFAULT_BUFFER_SIZE) { }
+  void Init();
+
+  std::vector<char> &Data() { return buf; }
 };
 
 /**
@@ -45,13 +45,13 @@ struct Buffer {
 class File: boost::noncopyable {
  public:
 
-  ~File() {
-    fclose(file_);
-  }
+  File();
+  ~File();
 
-  const FILE *GetFilePtr() {
-    return file_;
-  }
+  virtual void Reset(const char *filename) = 0;
+  virtual void Reset(FILE *file);
+
+  const FILE *GetFilePtr() { return file_; }
 
  protected:
   FILE *file_;
@@ -61,29 +61,21 @@ class FileInput: public File {
 
  public:
 
-  // default input_: stdin
-  FileInput() :
-      buf_(Buffer::DEFAULT_BUFFER_SIZE) {
-    file_ = stdin; // this assignment cannot be place in initializer list.
-  }
-
+  FileInput() = default;
+  
   // Read the content in filename and initialize the buffer size.
-  FileInput(const char *filename, size_t size) :
-      buf_(size) {
-    file_ = fopen(filename, "r");
+  FileInput(const char *filename, size_t size);
+
+  FileInput(const char *filename) :
+      FileInput(filename, Buffer::DEFAULT_BUFFER_SIZE) {
   }
 
-  size_t Read(size_t size) {
-    return fread(buf_.buf.data(), 1, size, file_);
-  }
+  void Reset(const char *filename);
 
-  Buffer &GetBufferLval() {
-    return buf_;
-  }
+  char Read(size_t size);
 
-  const Buffer &GetBuffer() const {
-    return buf_;
-  }
+  Buffer &GetBufferLval() { return buf_; }
+  const Buffer &GetBuffer() const { return buf_; }
 
  private:
   Buffer buf_;
@@ -93,18 +85,14 @@ class FileOutput: public File {
 
  public:
 
-  // default output: stdout
-  FileOutput() {
-    file_ = stdout;
-  }
+  FileOutput() = default;
 
-  FileOutput(const char *filename) {
-    fopen(filename, "w");
-  }
+  FileOutput(const char *filename);
 
-  size_t Write(Buffer &buf, size_t size) {
-    return fwrite(buf.buf.data(), 1, size, file_);
-  }
+  void Reset(const char *filename);
+
+  // Return the total number of bytes write from the buffer.
+  size_t Write(Buffer &buf, size_t size);
 };
 
 } // namespace lexer

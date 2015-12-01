@@ -9,5 +9,9 @@ using namespace lexer;
 
 int main(int argc, char **argv) {
   Lexer l;
-  l.Scan();
+  l.SetInputFile("test.in");
+  l.SetOutputFile("test.out");
+  while(l.Scan()) {
+
+  }
 }

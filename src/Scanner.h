@@ -16,11 +16,14 @@ class Scanner: boost::noncopyable {
 
  public:
 
-  // Uses stdin as default file input stream.
-  Scanner() = default;
+  Scanner() :
+      buf_(input_.GetBufferLval()) {
+  }
 
   // Returns false if an eof is hit.
   virtual bool Scan() = 0;
+
+  void SetInputFile(const char *file) { input_.Reset(file); }
 
   // The token corresponding to the matched pattern.
   const char *TokenData() const { return token_.data(); }
@@ -29,6 +32,7 @@ class Scanner: boost::noncopyable {
  protected:
   FileInput input_;
   std::string token_;
+  Buffer &buf_;
 };
 
 } //namespace lexer
