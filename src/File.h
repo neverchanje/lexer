@@ -17,26 +17,37 @@ namespace lexer {
  * Buffer read from input file and will be write to the output file.
  */
 struct Buffer {
+
   static const size_t DEFAULT_BUFFER_SIZE = (1 << 16);
+
   static const char END_OF_BUFFER_CHAR = '\0';
-  // static const size_t MAX_BUFFER_SIZE = std::numeric_limit<int>::max();
-  // static const double BUFFER_GROW_FACTOR = 1.5;
+
+  // The foolish compiler warns me if I use const rather than constexpr.
+  static constexpr float BUFFER_GROW_FACTOR = 1.5f;
+
+  /* static const size_t MAX_BUFFER_SIZE = std::numeric_limit<int>::max(); */
 
   // The internal buffer array where the data is stored.
   std::vector<char> buf;
 
   // The current position in the buffer.
+  // pos is always in the range of [0, buf.length()]
   size_t pos;
 
   // The line number and column number of current position.
   unsigned int lineno, column;
 
+  // std::vector always sets size() to capacity() when we specify its initial
+  // size. It's odd and therefore we maintain the real size `bufsz`.
+  // `bufsz` is one greater than the index of the last valid byte in the buffer.
+  size_t bufsz;
+
   Buffer(size_t size);
   Buffer() :
-      Buffer(DEFAULT_BUFFER_SIZE) { }
-  void Init();
+      Buffer(DEFAULT_BUFFER_SIZE) {
+  }
 
-  std::vector<char> &Data() { return buf; }
+  void Init();
 };
 
 /**
@@ -49,7 +60,7 @@ class File: boost::noncopyable {
   ~File();
 
   virtual void Reset(const char *filename) = 0;
-  virtual void Reset(FILE *file);
+  void Reset(FILE *file);
 
   const FILE *GetFilePtr() { return file_; }
 
@@ -57,12 +68,13 @@ class File: boost::noncopyable {
   FILE *file_;
 };
 
+// FileInput is a buffered file reader
 class FileInput: public File {
 
  public:
 
   FileInput() = default;
-  
+
   // Read the content in filename and initialize the buffer size.
   FileInput(const char *filename, size_t size);
 
@@ -72,7 +84,8 @@ class FileInput: public File {
 
   void Reset(const char *filename);
 
-  char Read(size_t size);
+  // Read one character from the file.
+  char Read();
 
   Buffer &GetBufferLval() { return buf_; }
   const Buffer &GetBuffer() const { return buf_; }

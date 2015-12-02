@@ -14,7 +14,7 @@ set(LEXER_SRC
         )
 
 add_executable(lexer ${LEXER_SRC})
-target_link_libraries(lexer ${Boost_LIBRARIES})
+target_link_libraries(lexer ${Boost_LIBRARIES} logger)
 
 include_directories(lib)
 add_subdirectory(lib)

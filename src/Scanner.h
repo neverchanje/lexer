@@ -12,7 +12,7 @@
 namespace lexer {
 
 // Base class of a general scanner.
-class Scanner: boost::noncopyable {
+class Scanner {
 
  public:
 

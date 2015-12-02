@@ -45,7 +45,8 @@ void Lexer::addCodeSect() {
 }
 
 bool Lexer::Scan() {
-
+  char c = input_.Read();
+  printf("%c\n", c);
   return true;
 }
 

@@ -101,15 +101,25 @@ class Logger: boost::noncopyable {
  * right after the end of the log statement. During the destruction, It writes and
  * flushes the log messages to the disk.
  */
+
+//
 #define LOG_TRACE    LOGGER(__FILE__, __LINE__, LOGGER::LogLevel::TRACE, __func__).stream()
+
 #ifndef NDEBUG
   #define LOG_DEBUG    LOGGER(__FILE__, __LINE__, LOGGER::LogLevel::DEBUG, __func__).stream()
 #else
   #define LOG_DEBUG LOG_TRACE
 #endif
+
+// LOG_INFO gives the progress and chosen state information. This level
+// will be generally useful for end user.
 #define LOG_INFO     LOGGER(__FILE__, __LINE__, LOGGER::LogLevel::INFO).stream()
+
 #define LOG_WARN     LOGGER(__FILE__, __LINE__, LOGGER::LogLevel::WARN).stream()
+
 #define LOG_ERROR    LOGGER(__FILE__, __LINE__, LOGGER::LogLevel::ERROR).stream()
+
+// Abort if fatal error is occured.
 #define LOG_FATAL    LOGGER(__FILE__, __LINE__, LOGGER::LogLevel::FATAL).stream()
 
 // Always-on checking

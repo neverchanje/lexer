@@ -13,12 +13,6 @@ set(CXX_FLAGS
         -Wconversion
 )
 
-# GTest will cause recusive setting in CMake when you try to reset the
-# location of the clang. So I use the default compiler, Apple Clang here,
-# which has slight differences with the official clang.
-#
-# set(CMAKE_CXX_COMPILER "/usr/local/llvm/bin/clang++")
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")

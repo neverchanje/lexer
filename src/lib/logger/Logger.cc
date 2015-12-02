@@ -56,7 +56,7 @@ Logger::LoggerImpl::LoggerImpl(const char *file, int line, Logger::LogLevel leve
     line_(line),
     time_(TimeValue::now()) {
   stream_ << time_.toFormattedString() << " ";
-  stream_ << ThisThread::getId() << " ";
+//  stream_ << ThisThread::getId() << " ";
   stream_ << detail::LogLevelNames[level];
 }
 
@@ -69,10 +69,8 @@ Logger::Logger(const char *file, int line, Logger::LogLevel level) :
     impl_(new LoggerImpl(file, line, level)) {
 }
 
-//My current version of C++11 compiler(clang 3.5.1) does not support make_unique,
-//but I don't want to use boost::make_ptr either.
 Logger::Logger(const char *file, int line, Logger::LogLevel level, const char *func) :
-    impl_(new LoggerImpl(file, line, level)){
+    impl_(new LoggerImpl(file, line, level)) {
   impl_->stream_ << func << " ";
 }
 

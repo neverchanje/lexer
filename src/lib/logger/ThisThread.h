@@ -11,14 +11,14 @@
 namespace sugen {
 
 /**
- * As we're not allowed to get current thread's id of type 'pid_t', via
- * std::this_thread::get_id, so we need to reinvent this wheel.
+ * Since we're not allowed to get current thread's id in type of 'pid_t' via
+ * std::this_thread::get_id, we need to reinvent this wheel.
  */
 
 namespace ThisThread {
 
 namespace detail {
-//cached for later usage.
+//cached for later use.
 thread_local pid_t t_tid = 0;
 } //namespace detail
 
