@@ -14,10 +14,7 @@ const size_t CHAR_SIZE = 256;
 
 typedef int State;
 
-struct AcceptData {
-  std::string Token;
-  std::function<void()> Action;
-};
+typedef int Sym;
 
 } // namespace lexer
 

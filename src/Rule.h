@@ -12,8 +12,10 @@
 namespace lexer {
 
 struct Pattern {
-  NFA::Machine Mach;
-  std::string Name;
+  NFA::Machine mach;
+  std::string name;
+  bool bol; // begin of line
+
 };
 
 class Rule {

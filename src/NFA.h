@@ -12,6 +12,7 @@
 #include <string>
 
 #include "LexerDef.h"
+#include "TokenTable.h"
 
 namespace lexer {
 
@@ -52,16 +53,16 @@ class NFA: boost::noncopyable {
    */
   struct Machine {
     // Each Machine contains only single start and final state.
-    State Start, Final;
+    State start, final;
 
     Machine(State st, State fn) :
-        Start(st),
-        Final(fn) {
+        start(st),
+        final(fn) {
     }
 
     Machine(NFA &nfa) :
-        Start(nfa.MakeState()),
-        Final(nfa.MakeState()) {
+        start(nfa.MakeState()),
+        final(nfa.MakeState()) {
     }
   };
 
@@ -83,9 +84,9 @@ class NFA: boost::noncopyable {
   // of the NFA.
   // DFA ToDFA() const;
 
-  void AddTrans(State from, int sym, State to);
+  void AddTrans(State from, Sym sym, State to);
 
-  State AddAccept(State state, const AcceptData &data);
+  void AddAccept(State state, TokenType data);
 
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
@@ -96,13 +97,17 @@ class NFA: boost::noncopyable {
   State MakeState();
 
   // Convert a machine into a closure.
+  // Equivalent with '*' in regex.
   Machine MakeClosure(Machine mach);
 
   // Make a machine optional.
+  // Equivalent with '?' in regex.
   Machine MakeOpt(Machine mach);
 
+  // Equivalent with '|' in regex.
   Machine MakeOr(Machine first, Machine second);
 
+  // Equivalent with '+' in regex.
   Machine MakePosClosure(Machine mach);
 
   State Start() { return start_; }
@@ -112,15 +117,15 @@ class NFA: boost::noncopyable {
  private:
 
   // Transition tuple (State from, State to, int symbol)
-  std::unordered_map<State, std::unordered_map<int, std::vector<State> > > trans1_;
-  std::unordered_map<State, std::unordered_map<State, int> > trans2_;
+  std::unordered_map<State, std::unordered_map<Sym, std::vector<State> > > trans1_;
+  std::unordered_map<State, std::unordered_map<State, Sym> > trans2_;
 
   // It also indicates the number of current states.
   int maxStateId_;
 
   State start_, final_;
 
-  std::unordered_map<State, AcceptData> accepts_;
+  std::unordered_map<State, TokenType> accepts_;
 
 };
 

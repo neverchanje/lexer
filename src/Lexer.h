@@ -9,6 +9,7 @@
 #include "NFA.h"
 #include "Scanner.h"
 #include "Generator.h"
+#include "TokenTable.h"
 
 namespace lexer {
 
@@ -42,6 +43,9 @@ class Lexer: public Scanner,
 
  private:
   NFA nfa_;
+
+  // name definition table
+  std::unordered_map<std::string, std::string> ndtbl_;
 };
 
 } // namespace lexer

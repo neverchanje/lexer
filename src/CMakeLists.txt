@@ -4,7 +4,7 @@ set(LEXER_SRC
         Scanner.h
         DFA.h DFA.cc
         NFA.h NFA.cc
-        SymbolTable.h
+        TokenTable.h TokenTable.cc
         CharClass.h CharClass.cc
         LexerDef.h
 #        Rule.h Rule.cc

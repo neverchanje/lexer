@@ -56,8 +56,8 @@ Machine CharClass::AddToNFA(NFA &nfa, State st, State fn) {
   for (int i = 0; i < CHAR_SIZE; i++) {
     if (charset_.test(i)) {
       tmp = nfa.MakeState();
-      nfa.AddTrans(ccl.Start, i, tmp);
-      nfa.AddTrans(tmp, SYM_EPSILON, ccl.Final);
+      nfa.AddTrans(ccl.start, i, tmp);
+      nfa.AddTrans(tmp, SYM_EPSILON, ccl.final);
     }
   }
   return ccl;

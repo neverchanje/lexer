@@ -5,6 +5,7 @@
 #include "Lexer.h"
 #include "CharClass.h"
 
+
 using namespace lexer;
 
 void Lexer::initNFA() {
@@ -14,26 +15,52 @@ void Lexer::initNFA() {
 }
 
 void Lexer::addDefSect() {
-  //---- add rule of NAME into NFA ---
-  // NAME <= [_a-zA-Z][a-zA-Z0-9_-]*
 
-  Machine m = nfa_.Mach();
-  State mid = nfa_.MakeState();
+  {
+    //---- add rule of NAME into NFA ---
+    // NAME <= [_a-zA-Z][a-zA-Z0-9_-]*
 
-  CharClass nccl1;
-  nccl1.Add('_');
-  nccl1.AddRange('a', 'z');
-  nccl1.AddRange('A', 'Z');
-  nccl1.AddToNFA(nfa_, m.Start, mid);
+    Machine m = nfa_.Mach();
 
-  CharClass nccl2;
-  nccl2.AddRange('a', 'z');
-  nccl2.AddRange('A', 'Z');
-  nccl2.AddRange('0', '9');
-  nccl2.Add('_');
-  nccl2.Add('-');
-  nccl2.AddToNFA(nfa_, mid, m.Final);
-  nfa_.MakeClosure(Machine(mid, m.Final));
+    CharClass nccl1;
+    Machine m1(m.start, nfa_.MakeState());
+    nccl1.Add('_');
+    nccl1.AddRange('a', 'z');
+    nccl1.AddRange('A', 'Z');
+    nccl1.AddToNFA(nfa_, m1.start, m1.final);
+
+    CharClass nccl2;
+    Machine m2(m1.final, nfa_.MakeState());
+    nccl2.AddRange('a', 'z');
+    nccl2.AddRange('A', 'Z');
+    nccl2.AddRange('0', '9');
+    nccl2.Add('_');
+    nccl2.Add('-');
+    nccl2.AddToNFA(nfa_, m2.start, m2.final);
+    m2 = nfa_.MakeClosure(m2);
+    nfa_.AddAccept(m2.final, TokenType::NAME);
+  }
+
+  {
+    //---- add rule of WHITESPACE into NFA ---
+    // WHITESPACE <= [ \t]+
+
+    CharClass ccl(" \t");
+    Machine m(nfa_.Start(), nfa_.MakeState());
+    ccl.AddToNFA(nfa_, m.start, m.final);
+    m = nfa_.MakePosClosure(m);
+    nfa_.AddAccept(m.final, TokenType::WHITESPACE);
+  }
+
+  {
+    //---- add rule of NEWLINE into NFA ---
+    // NEWLINE <= \r?\n
+
+    Machine m(nfa_.Start(), nfa_.MakeState());
+    nfa_.AddTrans(m.start, '\n', m.final);
+    m = nfa_.MakeOpt(m);
+    nfa_.AddAccept(m.final, TokenType::NEWLINE);
+  }
 }
 
 void Lexer::addRuleSect() {
@@ -45,8 +72,13 @@ void Lexer::addCodeSect() {
 }
 
 bool Lexer::Scan() {
-  char c = input_.Read();
-  printf("%c\n", c);
+  char c;
+  while (true) {
+    c = input_.Read();
+
+
+    break;
+  }
   return true;
 }
 

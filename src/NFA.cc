@@ -2,6 +2,7 @@
 // Created by neverchanje on 11/25/15.
 //
 
+#include <zconf.h>
 #include "NFA.h"
 
 using namespace lexer;
@@ -31,7 +32,7 @@ EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) {
   return E;
 }
 
-void NFA::AddTrans(State from, int sym, State to) {
+void NFA::AddTrans(State from, Sym sym, State to) {
   trans1_[from][sym].push_back(to);
   trans2_[from][to] = sym;
 }
@@ -56,8 +57,8 @@ State NFA::MakeState() {
 Machine NFA::MakeOpt(Machine mach) {
   State start = MakeState();
   State final = MakeState();
-  AddTrans(start, SYM_EPSILON, mach.Start);
-  AddTrans(mach.Final, SYM_EPSILON, final);
+  AddTrans(start, SYM_EPSILON, mach.start);
+  AddTrans(mach.final, SYM_EPSILON, final);
   AddTrans(start, SYM_EPSILON, final);
   return Machine(start, final);
 }
@@ -65,10 +66,10 @@ Machine NFA::MakeOpt(Machine mach) {
 Machine NFA::MakeOr(Machine first, Machine second) {
   State start = MakeState();
   State final = MakeState();
-  AddTrans(start, SYM_EPSILON, first.Start);
-  AddTrans(start, SYM_EPSILON, second.Start);
-  AddTrans(first.Final, SYM_EPSILON, final);
-  AddTrans(second.Final, SYM_EPSILON, final);
+  AddTrans(start, SYM_EPSILON, first.start);
+  AddTrans(start, SYM_EPSILON, second.start);
+  AddTrans(first.final, SYM_EPSILON, final);
+  AddTrans(second.final, SYM_EPSILON, final);
   return Machine(start, final);
 }
 
@@ -76,11 +77,9 @@ int NFA::NumOfStates() const {
   return maxStateId_;
 }
 
-State NFA::AddAccept(State state, const AcceptData &data) {
-  State accept = MakeState();
-  AddTrans(state, SYM_EPSILON, accept);
+void NFA::AddAccept(State accept, TokenType data) {
+  AddTrans(accept, SYM_EPSILON, final_);
   accepts_[accept] = data;
-  return accept;
 }
 
 Machine NFA::MakeClosure(Machine mach) {
@@ -88,6 +87,6 @@ Machine NFA::MakeClosure(Machine mach) {
 }
 
 Machine NFA::MakePosClosure(Machine mach) {
-  AddTrans(mach.Final, SYM_EPSILON, mach.Start);
+  AddTrans(mach.final, SYM_EPSILON, mach.start);
   return mach;
 }
