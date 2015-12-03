@@ -7,31 +7,24 @@
 
 #include <unordered_map>
 #include <string>
-#include <functional>
 
 namespace lexer {
 
-enum TokenType {
+enum TokenID {
   NAME,
-  WHITESPACE,
+  WS,
+  OPTWS,
   NEWLINE,
-  TOKEN_TYPE_NUM
+  TOKENID_NUM
 };
 
-/**
- * Example:
- * TokenTable["Foo123"] = TokenType::NAME
- */
-typedef std::unordered_map<std::string, TokenType> TokenTable;
-
-const char *GetTokenType(TokenType type);
+const char *GetTokenID(TokenID type);
 
 /**
  * Example:
- * ActionTable[TokenType::WHITESPACE] = [](){ do nothing }
+ * TokenTable["Foo123"] = TokenID::NAME
  */
-typedef std::function<void()> ActionFunc;
-typedef std::unordered_map<TokenType, ActionFunc> ActionTable;
+typedef std::unordered_map<std::string, TokenID> TokenTable;
 
 } // namespace lexer
 

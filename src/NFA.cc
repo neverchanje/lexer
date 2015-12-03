@@ -77,7 +77,7 @@ int NFA::NumOfStates() const {
   return maxStateId_;
 }
 
-void NFA::AddAccept(State accept, TokenType data) {
+void NFA::AddAccept(State accept, int data) {
   AddTrans(accept, SYM_EPSILON, final_);
   accepts_[accept] = data;
 }

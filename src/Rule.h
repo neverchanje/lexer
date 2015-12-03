@@ -11,11 +11,19 @@
 
 namespace lexer {
 
-struct Pattern {
-  NFA::Machine mach;
-  std::string name;
-  bool bol; // begin of line
+typedef int PatternID;
 
+int NewPatternID();
+
+/**
+ * Example:
+ * ActionTable[PATTERN_2] = [](){ do nothing }
+ */
+typedef std::function<void()> ActionFunc;
+typedef std::unordered_map<PatternID, ActionFunc> ActionTable;
+
+struct Pattern {
+  bool bol; // begin of line
 };
 
 class Rule {

@@ -38,18 +38,22 @@ void Lexer::addDefSect() {
     nccl2.Add('-');
     nccl2.AddToNFA(nfa_, m2.start, m2.final);
     m2 = nfa_.MakeClosure(m2);
-    nfa_.AddAccept(m2.final, TokenType::NAME);
+    nfa_.AddAccept(m2.final, TokenID::NAME);
   }
 
   {
-    //---- add rule of WHITESPACE into NFA ---
-    // WHITESPACE <= [ \t]+
+    //---- add rule of WS into NFA ---
+    // WS <= [ \t]+
 
     CharClass ccl(" \t");
     Machine m(nfa_.Start(), nfa_.MakeState());
     ccl.AddToNFA(nfa_, m.start, m.final);
     m = nfa_.MakePosClosure(m);
-    nfa_.AddAccept(m.final, TokenType::WHITESPACE);
+    nfa_.AddAccept(m.final, TokenID::WS);
+
+    //---- add rule of OPTWS into NFA ---
+    // OPTWS <= WS*
+
   }
 
   {
@@ -59,7 +63,7 @@ void Lexer::addDefSect() {
     Machine m(nfa_.Start(), nfa_.MakeState());
     nfa_.AddTrans(m.start, '\n', m.final);
     m = nfa_.MakeOpt(m);
-    nfa_.AddAccept(m.final, TokenType::NEWLINE);
+    nfa_.AddAccept(m.final, TokenID::NEWLINE);
   }
 }
 
@@ -75,8 +79,6 @@ bool Lexer::Scan() {
   char c;
   while (true) {
     c = input_.Read();
-
-
     break;
   }
   return true;

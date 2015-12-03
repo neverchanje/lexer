@@ -7,7 +7,7 @@ set(LEXER_SRC
         TokenTable.h TokenTable.cc
         CharClass.h CharClass.cc
         LexerDef.h
-#        Rule.h Rule.cc
+        Rule.h Rule.cc
         File.h File.cc
         Generator.h
         main.cc

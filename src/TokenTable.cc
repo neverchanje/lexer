@@ -6,12 +6,13 @@
 
 using namespace lexer;
 
-static const char *TokenTypeStr[] = {
+static const char *TokenIDStr[] = {
     "NAME",
-    "WHITESPACE",
+    "WS",
+    "OPTWS"
     "NEWLINE"
 };
 
-const char *GetTokenType(TokenType type) {
-  return TokenTypeStr[type];
+const char *GetTokenID(TokenID type) {
+  return TokenIDStr[type];
 }

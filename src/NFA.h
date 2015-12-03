@@ -86,7 +86,7 @@ class NFA: boost::noncopyable {
 
   void AddTrans(State from, Sym sym, State to);
 
-  void AddAccept(State state, TokenType data);
+  void AddAccept(State state, int data);
 
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
@@ -125,7 +125,7 @@ class NFA: boost::noncopyable {
 
   State start_, final_;
 
-  std::unordered_map<State, TokenType> accepts_;
+  std::unordered_map<State, int> accepts_;
 
 };
 
