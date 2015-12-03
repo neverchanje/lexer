@@ -9,12 +9,18 @@ using namespace lexer;
 
 typedef NFA::Machine Machine;
 
+//DFA NFA::ToDFA() const {
+//  std::set<State> DStates;
+//
+//}
+
 EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) {
   // Since retrieving from unordered_map requires modification of the map,
   // this method cannot mark const.
   std::vector<State> S = T;
 
-  EpsClosure E;
+  // copy initial state into epsilon closure
+  EpsClosure E(S.data(), S.data() + S.size());
 
   while (!S.empty()) {
     State u = S.back();
@@ -38,20 +44,14 @@ void NFA::AddTrans(State from, Sym sym, State to) {
 }
 
 void NFA::Dump() const {
-  fprintf(stderr, "------- Begining of dumping the NFA. -------");
+  fprintf(stderr, "\n------- Begining of dumping the NFA. -------\n");
   for (auto t1 = trans2_.begin(); t1 != trans2_.end(); t1++) {
     for (auto t2 = (*t1).second.begin(); t2 != (*t1).second.end(); t2++) {
       fprintf(stderr, "<from:%d, sym:%d, to:%d>\n",
-              (*t1).first, (*t2).first, (*t2).second);
+              (*t1).first, (*t2).second, (*t2).first);
     }
   }
   fprintf(stderr, "------- Ending of dumping the NFA. -------\n");
-}
-
-State NFA::MakeState() {
-  State stateId = maxStateId_;
-  maxStateId_++;
-  return stateId;
 }
 
 Machine NFA::MakeOpt(Machine mach) {
@@ -71,10 +71,6 @@ Machine NFA::MakeOr(Machine first, Machine second) {
   AddTrans(first.final, SYM_EPSILON, final);
   AddTrans(second.final, SYM_EPSILON, final);
   return Machine(start, final);
-}
-
-int NFA::NumOfStates() const {
-  return maxStateId_;
 }
 
 void NFA::AddAccept(State accept, int data) {

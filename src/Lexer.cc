@@ -8,7 +8,7 @@
 
 using namespace lexer;
 
-void Lexer::initNFA() {
+void Lexer::InitNFA() {
   addDefSect();
   addRuleSect();
   addCodeSect();
@@ -52,8 +52,10 @@ void Lexer::addDefSect() {
     nfa_.AddAccept(m.final, TokenID::WS);
 
     //---- add rule of OPTWS into NFA ---
-    // OPTWS <= WS*
+    // OPTWS <= WS?
 
+    m = nfa_.MakeClosure(m);
+    nfa_.AddAccept(m.final, TokenID::OPTWS);
   }
 
   {

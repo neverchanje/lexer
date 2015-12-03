@@ -68,10 +68,13 @@ class NFA: boost::noncopyable {
 
  public:
 
+  static const int START_STATE = 0;
+  static const int FINAL_STATE = -1;
+
   NFA() :
-      start_(0),
-      final_(1),
-      maxStateId_(2) {
+      start_(START_STATE),
+      final_(FINAL_STATE),
+      maxStateId_(0) {
   }
 
   // Construct the epsilon closure of the set of NFA states T, and return the
@@ -91,10 +94,11 @@ class NFA: boost::noncopyable {
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
 
-  int NumOfStates() const;
+  int NumOfStates() const { return maxStateId_ + 2; }
 
   // Make a new state and add it into the NFA.
-  State MakeState();
+  // The index of the first state is 1.
+  State MakeState() { return ++maxStateId_; }
 
   // Convert a machine into a closure.
   // Equivalent with '*' in regex.
@@ -116,8 +120,10 @@ class NFA: boost::noncopyable {
 
  private:
 
-  // Transition tuple (State from, State to, int symbol)
+  // Transition tuple (State from, Sym symbol, State to)
   std::unordered_map<State, std::unordered_map<Sym, std::vector<State> > > trans1_;
+
+  // (State from, State to, Sym symbol)
   std::unordered_map<State, std::unordered_map<State, Sym> > trans2_;
 
   // It also indicates the number of current states.

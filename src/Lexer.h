@@ -23,13 +23,14 @@ class Lexer: public Scanner,
 
   void Gen();
 
+  // Constructing the NFA used in lexer from regular expressions.
+  // The details of the conversion can be found in doc/lexer.md.
+  void InitNFA();
+
  private:
 
   typedef NFA::Machine Machine;
 
-  // Constructing the NFA used in lexer from regular expressions.
-  // The details of the conversion can be found in doc/lexer.md.
-  void initNFA();
   // Add rules in definition section.
   void addDefSect();
   // Add rules in rule section.
