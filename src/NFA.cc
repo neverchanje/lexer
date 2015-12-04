@@ -2,25 +2,29 @@
 // Created by neverchanje on 11/25/15.
 //
 
-#include <zconf.h>
+#include <cassert>
 #include "NFA.h"
+#include "DFA.h"
 
 using namespace lexer;
 
 typedef NFA::Machine Machine;
 
-//DFA NFA::ToDFA() const {
-//  std::set<State> DStates;
-//
-//}
+DFA NFA::ToDFA() {
+  DFA dfa;
+  EpsClosure E;
 
-EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) {
+  return dfa;
+}
+
+void NFA::GetEpsClosure(const std::vector<State> &T, EpsClosure &E) {
   // Since retrieving from unordered_map requires modification of the map,
-  // this method cannot mark const.
+  // this method cannot be marked const.
   std::vector<State> S = T;
 
-  // copy initial state into epsilon closure
-  EpsClosure E(S.data(), S.data() + S.size());
+  E.clear();
+  // copy initial states into epsilon closure
+  for (auto i : S) E.insert(i);
 
   while (!S.empty()) {
     State u = S.back();
@@ -35,7 +39,6 @@ EpsClosure NFA::GetEpsClosure(const std::vector<State> &T) {
       }
     }
   }
-  return E;
 }
 
 void NFA::AddTrans(State from, Sym sym, State to) {

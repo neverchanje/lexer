@@ -79,15 +79,16 @@ class NFA: boost::noncopyable {
 
   // Construct the epsilon closure of the set of NFA states T, and return the
   // result.
-  // We have Named-Return-Value-Optimization to reduce the copy times.
-  EpsClosure GetEpsClosure(const std::vector<State> &T);
+  void GetEpsClosure(const std::vector<State> &T, EpsClosure& E);
 
   // Subset construction algorithm.
-  // We temporarily assume that this method will not modify the internal structure
-  // of the NFA.
-  // DFA ToDFA() const;
+  DFA ToDFA();
 
   void AddTrans(State from, Sym sym, State to);
+
+  bool FindTrans(State from, Sym sym) const;
+
+  State GetTrans(State, Sym sym) const;
 
   void AddAccept(State state, int data);
 

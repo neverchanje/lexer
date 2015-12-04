@@ -17,6 +17,44 @@
 }
 ```
 
+***Design 1***
+```
+//----------- data structure ----------
+vector< set<state> > unmarked;
+unordered_set< set<State> > dfastates;
+//----------- algorithm ----------
+unmarked.push(EpsClosure(s0))
+while(!unmarked.empty()) 
+{
+    T = unmarked.pop(); // mark
+    dfastates.insert(T)
+    for(each sym a != EPSILON)
+    {
+        set<State> U
+        for(State t in T)
+        {
+            if(nfa.FindTrans(t, a)) 
+            {
+                U.insert(nfa.GetTrans(t, a))
+            }
+        }
+        if(!dfastates.find(U)) 
+        {
+            unmarked.push(U)
+        }
+        DStates[T, a] = U
+    }
+}
+```
+
+***Design 2***
+```
+//----------- data structure ----------
+vector< StateSetID > unmarked
+set< StateSetID > dfastates
+unordered_map<set<State>, StateSetID> StateSetTable;
+```
+
 #### Epsilon Closure (A set of NFA states T)
 ```
 {

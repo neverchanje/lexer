@@ -1,6 +1,7 @@
 # lexer
 
-`lexer` is a tool for generating simple lexical analyser.
+`lexer` is the lexical analyser for `glex`, a simple tool used for generating 
+lexer.
 
 ### Design Diagram
 [LINK on ProcessOn](https://www.processon.com/view/link/5660245ee4b00e1bc07b9ba3)
