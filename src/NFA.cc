@@ -3,21 +3,102 @@
 //
 
 #include <cassert>
+#include <boost/functional/hash.hpp>
 #include "NFA.h"
 #include "DFA.h"
 
 using namespace lexer;
 
+// cannot be deleted
 typedef NFA::Machine Machine;
+
+struct StateSetHasher {
+  size_t operator()(const StateSet &val) const {
+    return boost::hash_range(val.begin(), val.end());
+  }
+};
+
+typedef std::unordered_map<StateSet, State, StateSetHasher> StateSetTable;
+
+static const StateSet &findInDStates(const StateSetTable &table, State id) {
+  bool found = false;
+  for (auto it = table.begin(); it != table.end(); it++) {
+    if (it->second == id) {
+      found = true;
+      return it->first;
+    }
+  }
+  assert(found);
+  return table.begin()->first;
+}
+
+#define SKIP_IF_NO_TRANSITION(from, sym) \
+{ \
+  const auto &t1 = trans1_.find(from); \
+  if (t1 == trans1_.end()) continue; \
+  const auto &t2 = t1->second.find(sym); \
+  if (t2 == t1->second.end()) continue; \
+}
 
 DFA NFA::ToDFA() {
   DFA dfa;
   EpsClosure E;
 
+  std::vector<State> unmarked;
+  StateSetTable table;
+  State maxID = 0;
+  StateSet U;
+  std::vector<Sym> symlist;
+
+  GetEpsClosure(std::vector<State>({start_}), E);
+  table[E] = maxID;
+  unmarked.push_back(maxID++);
+
+  while (!unmarked.empty()) {
+    State Tid = unmarked.back();
+    unmarked.pop_back();
+
+    const StateSet &T = findInDStates(table, Tid);
+
+    // get all symbols out from T
+    symlist.clear();
+    for (auto st : T) {
+      Sym a = trans1_.find(st)->first;
+      if (a != SYM_EPSILON) {
+        symlist.push_back(a);
+      }
+    }
+
+    for (auto a : symlist) {
+      E.clear();
+      U.clear();
+
+      // get U
+      for (auto t : T) {
+        SKIP_IF_NO_TRANSITION(t, a);
+        const auto &vec = GetTrans(t, a);
+
+        GetEpsClosure(vec, E);
+        U.insert(vec.begin(), vec.end());
+      }
+
+      // if U is not in DStates
+      auto it = table.find(U);
+      State Uid;
+      if (it == table.end()) {
+        table[U] = Uid = maxID;
+        unmarked.push_back(maxID++);
+      } else {
+        Uid = it->second;
+      }
+
+      dfa.AddTrans(Tid, a, Uid);
+    }
+  }
   return dfa;
 }
 
-void NFA::GetEpsClosure(const std::vector<State> &T, EpsClosure &E) {
+void NFA::GetEpsClosure(const std::vector<State> &T, EpsClosure &E) const {
   // Since retrieving from unordered_map requires modification of the map,
   // this method cannot be marked const.
   std::vector<State> S = T;
@@ -30,10 +111,10 @@ void NFA::GetEpsClosure(const std::vector<State> &T, EpsClosure &E) {
     State u = S.back();
     S.pop_back();
 
-    auto &tos = trans1_[u][SYM_EPSILON];
-    State v;
-    for (auto it = tos.begin(); it != tos.end(); it++) {
-      v = *it;
+    // if there's no epsilon transition out from u
+    SKIP_IF_NO_TRANSITION(u, SYM_EPSILON);
+    const auto &tos = GetTrans(u, SYM_EPSILON);
+    for (State v : tos) {
       if (E.insert(v).second == true) { // v is not in epsilon closure.
         S.push_back(v);
       }
@@ -88,4 +169,16 @@ Machine NFA::MakeClosure(Machine mach) {
 Machine NFA::MakePosClosure(Machine mach) {
   AddTrans(mach.final, SYM_EPSILON, mach.start);
   return mach;
+}
+
+bool NFA::FindTrans(State from, Sym sym) const {
+  if (trans1_.find(from) == trans1_.end()) {
+    return false;
+  }
+  auto &t1 = trans1_.find(from)->second;
+  return (t1.find(sym) != t1.end());
+}
+
+const std::vector<State> &NFA::GetTrans(State from, Sym sym) const {
+  return trans1_.find(from)->second.find(sym)->second;
 }

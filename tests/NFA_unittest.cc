@@ -30,10 +30,10 @@ TEST(NFA_EpsClosure, NFA_EpsClosure_Test) {
   nfa.Dump();
 
   EpsClosure eps;
-  nfa.GetEpsClosure({1}, eps);
+  nfa.GetEpsClosure(std::vector<State>({1}), eps);
   EpsClosure ts({1, 2, 3, 4});
 
-  EXPECT_EQ(ts, std::set<State>({1, 2, 3, 4}));
+  EXPECT_EQ(ts, StateSet({1, 2, 3, 4}));
   EXPECT_EQ(ts, eps);
 }
 
@@ -91,7 +91,7 @@ TEST(NFA_ToDFA_02, NFA_ToDFA_Test) {
 
   EpsClosure E;
   nfa.GetEpsClosure(std::vector<State>({nfa.Start()}), E);
-  EXPECT_EQ(std::set<int>({0, 1, 2, 4, 7}), E);
+  EXPECT_EQ(StateSet({0, 1, 2, 4, 7}), E);
 
 //  <from:9, sym:98, to:-1>
 //  <from:8, sym:98, to:9>

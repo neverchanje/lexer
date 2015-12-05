@@ -5,9 +5,9 @@
 #ifndef LEXER_NFA_H
 #define LEXER_NFA_H
 
-#include <set>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <boost/noncopyable.hpp>
 #include <string>
 
@@ -18,6 +18,8 @@ namespace lexer {
 
 class DFA;
 
+typedef std::unordered_set<State> StateSet;
+
 /**
  * Definition of epsilon closure in flex:
  * The epsilon closure is the set of all states reachable by an arbitrary
@@ -26,9 +28,9 @@ class DFA;
  * accepting numbers.
  *
  * Since searching and insertion are the most usual operations in the manipulation
- * of EpsClosure, we use std::set, which is time-efficient in both of two.
+ * of EpsClosure, we use std::unordered_set, which is time-efficient in both of two.
  */
-typedef std::set<State> EpsClosure;
+typedef StateSet EpsClosure;
 
 /**
  * Mark the symbol epsilon.
@@ -79,7 +81,7 @@ class NFA: boost::noncopyable {
 
   // Construct the epsilon closure of the set of NFA states T, and return the
   // result.
-  void GetEpsClosure(const std::vector<State> &T, EpsClosure& E);
+  void GetEpsClosure(const std::vector<State> &T, EpsClosure &E) const;
 
   // Subset construction algorithm.
   DFA ToDFA();
@@ -88,7 +90,7 @@ class NFA: boost::noncopyable {
 
   bool FindTrans(State from, Sym sym) const;
 
-  State GetTrans(State, Sym sym) const;
+  const std::vector<State> &GetTrans(State, Sym sym) const;
 
   void AddAccept(State state, int data);
 

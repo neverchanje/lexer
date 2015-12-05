@@ -20,40 +20,109 @@
 ***Design 1***
 ```
 //----------- data structure ----------
-vector< set<state> > unmarked;
-unordered_set< set<State> > dfastates;
-//----------- algorithm ----------
+vector< set<State> > unmarked;
+map< set<State>, State > DStates
+State maxID
+//----------- algorithm ---------------
 unmarked.push(EpsClosure(s0))
+DStates[EpsClosure(s0)] = maxID++
 while(!unmarked.empty()) 
 {
-    T = unmarked.pop(); // mark
-    dfastates.insert(T)
-    for(each sym a != EPSILON)
+    T = unmarked.pop() // mark
+    vector<Sym> symlist = GetAllSymFromT(T)
+    set<State> U
+    for(Sym a in symlist)
     {
-        set<State> U
         for(State t in T)
         {
-            if(nfa.FindTrans(t, a)) 
-            {
-                U.insert(nfa.GetTrans(t, a))
-            }
+            U.insert(nfa.GetTrans(t, a))
         }
-        if(!dfastates.find(U)) 
-        {
+        U = nfa.GetEpsClosure(U)
+        if(!DStates.find(U)) // U is not in DStates
+        {   
             unmarked.push(U)
+            DStates[U] = maxID++
         }
-        DStates[T, a] = U
+        trans[DStates[T], a] = DStates[U]
     }
 }
 ```
+Complexity:
+Time: O(E)
+E is the number of edges in nfa.
 
 ***Design 2***
 ```
 //----------- data structure ----------
-vector< StateSetID > unmarked
-set< StateSetID > dfastates
-unordered_map<set<State>, StateSetID> StateSetTable;
+vector< State > unmarked
+vector< set<State> > DStates
+State maxID
+//----------- algorithm --------------- 
+DStates.push(EpsClosure[s0]) // maxID == DStates.size
+unmarked.push(maxID++)
+while(!unmarked.empty()) 
+{
+    Tid = unmarked.pop() // mark
+    vector<Sym> symlist = GetAllSymFromT(T)
+    set<State> U
+    for(Sym a in symlist)
+    {
+        for(State t in T)
+        {
+            U.insert(nfa.GetTrans(t, a))
+        }
+        U = nfa.GetEpsClosure(U)
+        Uid = DStates.find(U)
+        if(!Uid) 
+        {
+            DStates.push(U)
+            Uid = maxID
+            unmarked.push(maxID++)
+        }
+        trans[Tid, a] = Uid
+    }
+}
 ```
+Time Complexity: O(unmarked.size() ^ 2)
+Apparently, this algorithm consumes less memory, but whose time 
+consumption is not acceptable.
+
+***Design 3***
+```
+//----------- data structure ----------
+vector< State > unmarked
+map< set<State>, State > DStates
+State maxID
+//----------- algorithm ---------------
+table[EpsClosure(s0)] = maxID
+unmarked.push(maxID++)
+while(!unmarked.empty()) 
+{
+    Tid = unmarked.pop() // mark
+    T = DStates.find(Tid) // O(epsilon.size)
+    vector<Sym> symlist = GetAllSymFromT(T)
+    set<State> U
+    for(Sym a in symlist)
+    {
+        for(State t in T)
+        {
+            U.insert(nfa.GetTrans(t, a))
+        }
+        U = nfa.GetEpsClosure(U)
+        if(!DStates.find(U)) {
+            DStates[U] = maxID
+            unmarked.push(maxID++)
+        }
+        trans[T, a] = U
+    }
+}
+```
+It consumes the same memory as Design 2 and costs the same time
+as Design 1. So it seems to be an acceptable choice for our 
+implementation.
+
+***Design 4***
+Maybe we can have a try on boost::bimap.
 
 #### Epsilon Closure (A set of NFA states T)
 ```
