@@ -110,5 +110,10 @@ TEST(NFA_ToDFA_02, NFA_ToDFA_Test) {
 
   DFA dfa = nfa.ToDFA();
 
+//  <from:0, sym:4, to:1>
+//  <from:0, sym:2, to:1>
+//  <from:0, sym:7, to:1>
+//  <from:0, sym:1, to:1>
+//  <from:0, sym:0, to:1>
   dfa.Dump();
 }

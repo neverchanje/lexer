@@ -12,13 +12,16 @@ namespace lexer {
 class NFA;
 
 /**
- * Deterministic Finite Automata
+ * Deterministic Finite Automaton
  */
 class DFA {
 
-  friend class NFA;
-
  public:
+
+  DFA() :
+      start_(0),
+      maxStateId_(1) {
+  }
 
   static DFA FromNFA(NFA &nfa);
 
@@ -36,16 +39,10 @@ class DFA {
 
   State Start() const { return start_; }
 
-  // Debugging method to write out all of the transitions in the NFA.
+  // Debugging method to write out all of the transitions in the DFA.
   void Dump() const;
 
  private:
-
-  // DFA is only allowed to be constructed by an NFA.
-  DFA() :
-      start_(0),
-      maxStateId_(1) {
-  }
 
   std::unordered_map<State, std::unordered_map<Sym, State> > trans_;
 
