@@ -118,8 +118,6 @@ class NFA: boost::noncopyable {
   // Equivalent with '+' in regex.
   Machine MakePosClosure(Machine mach);
 
-  State Start() { return start_; }
-  State Final() { return final_; }
   Machine Mach() { return Machine(start_, final_); }
 
  private:

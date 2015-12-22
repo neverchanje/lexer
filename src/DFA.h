@@ -16,9 +16,11 @@ class DFA {
 
  public:
 
+  static const int START_STATE = 0;
+
   // DFA is created with a start state.
   DFA() :
-      start_(0),
+      start_(START_STATE),
       maxStateId_(1) {
   }
 
@@ -33,8 +35,6 @@ class DFA {
   bool HasTrans(State from, Sym sym) const;
 
   State GetTrans(State, Sym sym) const;
-
-  State Start() const { return start_; }
 
   // Debugging method to write out all of the transitions in the DFA.
   void Dump() const;

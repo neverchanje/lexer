@@ -46,7 +46,7 @@ void Lexer::addDefSect() {
     // WS <= [ \t]+
 
     CharClass ccl(" \t");
-    Machine m(nfa_.Start(), nfa_.MakeState());
+    Machine m(NFA::START_STATE, nfa_.MakeState());
     ccl.AddToNFA(nfa_, m.start, m.final);
     m = nfa_.MakePosClosure(m);
     nfa_.AddAccept(m.final, TokenID::WS);
@@ -62,7 +62,7 @@ void Lexer::addDefSect() {
     //---- add rule of NEWLINE into NFA ---
     // NEWLINE <= \r?\n
 
-    Machine m(nfa_.Start(), nfa_.MakeState());
+    Machine m(NFA::START_STATE, nfa_.MakeState());
     nfa_.AddTrans(m.start, '\n', m.final);
     m = nfa_.MakeOpt(m);
     nfa_.AddAccept(m.final, TokenID::NEWLINE);
