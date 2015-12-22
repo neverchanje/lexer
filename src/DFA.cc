@@ -3,19 +3,14 @@
 //
 
 #include "DFA.h"
-#include "NFA.h"
 
 using namespace lexer;
-
-DFA DFA::FromNFA(NFA &nfa) {
-  return nfa.ToDFA();
-}
 
 void DFA::AddTrans(State from, Sym sym, State to) {
   trans_[from][sym] = to;
 }
 
-bool DFA::FindTrans(State from, Sym sym) const {
+bool DFA::HasTrans(State from, Sym sym) const {
   if (trans_.find(from) == trans_.end()) {
     return false;
   }

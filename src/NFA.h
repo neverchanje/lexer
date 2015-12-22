@@ -73,6 +73,7 @@ class NFA: boost::noncopyable {
   static const int START_STATE = 0;
   static const int FINAL_STATE = -1;
 
+  // NFA is created with a start state and a final state.
   NFA() :
       start_(START_STATE),
       final_(FINAL_STATE),
@@ -88,7 +89,7 @@ class NFA: boost::noncopyable {
 
   void AddTrans(State from, Sym sym, State to);
 
-  bool FindTrans(State from, Sym sym) const;
+  bool HasTrans(State from, Sym sym) const;
 
   const std::vector<State> &GetTrans(State, Sym sym) const;
 

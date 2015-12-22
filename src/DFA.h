@@ -9,8 +9,6 @@
 
 namespace lexer {
 
-class NFA;
-
 /**
  * Deterministic Finite Automaton
  */
@@ -18,12 +16,11 @@ class DFA {
 
  public:
 
+  // DFA is created with a start state.
   DFA() :
       start_(0),
       maxStateId_(1) {
   }
-
-  static DFA FromNFA(NFA &nfa);
 
   int NumOfStates() const { return maxStateId_; }
 
@@ -33,7 +30,7 @@ class DFA {
 
   void AddTrans(State from, Sym sym, State to);
 
-  bool FindTrans(State from, Sym sym) const;
+  bool HasTrans(State from, Sym sym) const;
 
   State GetTrans(State, Sym sym) const;
 

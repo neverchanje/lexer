@@ -171,7 +171,7 @@ Machine NFA::MakePosClosure(Machine mach) {
   return mach;
 }
 
-bool NFA::FindTrans(State from, Sym sym) const {
+bool NFA::HasTrans(State from, Sym sym) const {
   if (trans1_.find(from) == trans1_.end()) {
     return false;
   }
