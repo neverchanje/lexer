@@ -3,8 +3,8 @@
 //
 
 #include <cerrno>
+#include <cstdlib>
 #include "File.h"
-#include <logger/Logger.h>
 
 using namespace lexer;
 
@@ -48,17 +48,14 @@ void File::Reset(FILE *file) {
 
 static FILE *fopenWrap(const char *filename, bool read) {
   FILE *pFile = fopen(filename, read ? "r" : "w");
+  // no such file
   if (errno == ENOENT) {
-    LOG_FATAL
-        << "\"Openning file "
-        << filename
-        << (read ? " in read mode: " : "in write mode: ")
-        << strerror(errno) << "\"";
-  } else {
-    LOG_INFO << "\"Open file "
-        << filename
-        << (read ? " in read mode" : "in write mode")
-        << "\"";
+    fprintf(stderr,
+            "Opening file %s %s %s",
+            filename,
+            (read ? " in read mode: " : "in write mode: "),
+            strerror(errno));
+    abort();
   }
   return pFile;
 }

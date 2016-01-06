@@ -70,8 +70,8 @@ class NFA: boost::noncopyable {
 
  public:
 
-  static const int START_STATE = 0;
-  static const int FINAL_STATE = -1;
+  static const State START_STATE = 0;
+  static const State FINAL_STATE = -1;
 
   // NFA is created with a start state and a final state.
   NFA() :

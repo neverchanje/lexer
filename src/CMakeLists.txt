@@ -1,20 +1,15 @@
 
 set(LEXER_SRC
-        Lexer.h Lexer.cc
+        Lexer.cc
+        DFA.cc
+        NFA.cc
+        TokenTable.cc
+        CharClass.cc
+        File.cc
         Scanner.h
-        DFA.h DFA.cc
-        NFA.h NFA.cc
-        TokenTable.h TokenTable.cc
-        CharClass.h CharClass.cc
-        LexerDef.h
-#        Rule.h Rule.cc
-        File.h File.cc
         Generator.h
         main.cc
         )
 
 add_executable(lexer ${LEXER_SRC})
-target_link_libraries(lexer ${Boost_LIBRARIES} logger)
-
-include_directories(lib)
-add_subdirectory(lib)
+target_link_libraries(lexer ${Boost_LIBRARIES})

@@ -5,9 +5,10 @@
 #ifndef LEXER_DFA_H
 
 #include <unordered_map>
-#include "LexerDef.h"
 
 namespace lexer {
+
+typedef int SymbolID;
 
 /**
  * Deterministic Finite Automaton
@@ -16,7 +17,9 @@ class DFA {
 
  public:
 
-  static const int START_STATE = 0;
+  typedef int State;
+
+  static const State START_STATE = 0;
 
   // DFA is created with a start state.
   DFA() :
@@ -30,18 +33,27 @@ class DFA {
 
   State MakeState() { return maxStateId_++; }
 
-  void AddTrans(State from, Sym sym, State to);
+  void AddTrans(State from, SymbolID sym, State to);
 
-  bool HasTrans(State from, Sym sym) const;
+  bool HasTrans(State from, SymbolID sym) const;
 
-  State GetTrans(State, Sym sym) const;
+  State GetTrans(State, SymbolID sym) const;
 
-  // Debugging method to write out all of the transitions in the DFA.
+ public:
+
+  // (DEBUG) Write out all of the transitions in the DFA.
   void Dump() const;
+
+  // (DEBUG)
+  std::string ToString() const;
+
+  // (DEBUG) Return the internal transition table.
+  const std::unordered_map<State, std::unordered_map<SymbolID, State> > &
+  GetTransTable() const { return trans_; };
 
  private:
 
-  std::unordered_map<State, std::unordered_map<Sym, State> > trans_;
+  std::unordered_map<State, std::unordered_map<SymbolID, State> > trans_;
 
   State start_;
 
