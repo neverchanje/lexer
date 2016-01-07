@@ -46,15 +46,10 @@ CharClass::CharClass(const std::string &set) {
   }
 }
 
-Machine CharClass::AddToNFA(NFA &nfa) {
-  return AddToNFA(nfa, nfa.MakeState(), nfa.MakeState());
-}
-
-Machine CharClass::AddToNFA(NFA &nfa, State st, State fn) {
-  Machine ccl(st, fn);
+Machine CharClass::AddToNFA(NFA &nfa, const Machine &ccl) {
   State tmp;
   for (int i = 0; i < CHAR_SIZE; i++) {
-    if (charset_.test(i)) {
+    if (charset_.test(size_t(i))) {
       tmp = nfa.MakeState();
       nfa.AddTrans(ccl.start, i, tmp);
       nfa.AddTrans(tmp, SYM_EPSILON, ccl.final);

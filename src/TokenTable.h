@@ -15,10 +15,22 @@ enum TokenID {
   WS,
   OPTWS,
   NEWLINE,
-  TOKENID_NUM
+  DEF_OR, // |
+  DEF_PLUS, // +
+  DEF_OPT, // ?
+  DEF_STAR, // *
+  LEFT_BRACKET, // (
+  RIGHT_BRACKET, // )
+  DEF_CC_START, // [
+  DEF_CC_END,  // ]
+  DEF_CC_CONNECTOR, // -
+  LOWER_CASE_LETTER, // a-z
+  UPPER_CASE_LETTER, // A-Z
+  DIGIT, // 0-9
+  TOKEN_NUM
 };
 
-const char *GetTokenID(TokenID type);
+const char *GetToken(TokenID type);
 
 /**
  * Example:

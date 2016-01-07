@@ -32,14 +32,6 @@ static const StateSet &findInDStates(const StateSetTable &table, State id) {
   return table.begin()->first;
 }
 
-#define SKIP_IF_NO_TRANSITION(from, sym) \
-{ \
-  const auto &t1 = trans1_.find(from); \
-  if (t1 == trans1_.end()) continue; \
-  const auto &t2 = t1->second.find(sym); \
-  if (t2 == t1->second.end()) continue; \
-}
-
 DFA NFA::ToDFA() {
   DFA dfa;
   EpsClosure E;
@@ -75,9 +67,10 @@ DFA NFA::ToDFA() {
 
       // get U
       for (auto t : T) {
-        SKIP_IF_NO_TRANSITION(t, a);
-        const auto &vec = GetTrans(t, a);
+        auto opt_pvec = GetTrans(t, a);
+        if (!opt_pvec) continue;
 
+        const auto &vec = *(*opt_pvec);
         GetEpsClosure(vec, E);
         U.insert(vec.begin(), vec.end());
       }
@@ -99,8 +92,6 @@ DFA NFA::ToDFA() {
 }
 
 void NFA::GetEpsClosure(const std::vector<State> &T, EpsClosure &E) const {
-  // Since retrieving from unordered_map requires modification of the map,
-  // this method cannot be marked const.
   std::vector<State> S = T;
 
   E.clear();
@@ -111,9 +102,11 @@ void NFA::GetEpsClosure(const std::vector<State> &T, EpsClosure &E) const {
     State u = S.back();
     S.pop_back();
 
-    // if there's no epsilon transition out from u
-    SKIP_IF_NO_TRANSITION(u, SYM_EPSILON);
-    const auto &tos = GetTrans(u, SYM_EPSILON);
+    // Skip if there's no epsilon transition out from u
+    auto opt_ptos = GetTrans(u, SYM_EPSILON);
+    if (!opt_ptos) continue;
+
+    const auto &tos = *(*opt_ptos);
     for (State v : tos) {
       if (E.insert(v).second == true) { // v is not in epsilon closure.
         S.push_back(v);
@@ -157,9 +150,10 @@ Machine NFA::MakeOr(Machine first, Machine second) {
   return Machine(start, final);
 }
 
-void NFA::AddAccept(State accept, int data) {
+void NFA::AddAccept(State accept, TokenID data) {
   AddTrans(accept, SYM_EPSILON, final_);
-  accepts_[accept] = data;
+  tokens_[accept] = data;
+  accepts_[data] = accept;
 }
 
 Machine NFA::MakeClosure(Machine mach) {
@@ -171,14 +165,15 @@ Machine NFA::MakePosClosure(Machine mach) {
   return mach;
 }
 
-bool NFA::HasTrans(State from, Sym sym) const {
-  if (trans1_.find(from) == trans1_.end()) {
-    return false;
-  }
-  auto &t1 = trans1_.find(from)->second;
-  return (t1.find(sym) != t1.end());
-}
+boost::optional<const std::vector<State> *>
+NFA::GetTrans(State from, Sym sym) const {
+  auto found1 = trans1_.find(from);
+  if (found1 == trans1_.end())
+    return boost::none;
 
-const std::vector<State> &NFA::GetTrans(State from, Sym sym) const {
-  return trans1_.find(from)->second.find(sym)->second;
+  auto found2 = found1->second.find(sym);
+  if (found2 == found1->second.end()) {
+    return boost::none;
+  }
+  return &found2->second;
 }

@@ -8,11 +8,12 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include <boost/noncopyable.hpp>
 #include <string>
+#include <boost/optional.hpp>
 
 #include "LexerDef.h"
 #include "TokenTable.h"
+#include "DisallowCopying.h"
 
 namespace lexer {
 
@@ -40,7 +41,8 @@ const int SYM_EPSILON = 257;
 /**
  * Non-deterministic Finite Automata
  */
-class NFA: boost::noncopyable {
+class NFA {
+  __DISALLOW_COPYING__(NFA);
 
 // TODO: Optimization: Merge the states which have only epsilon transitions.
 
@@ -77,6 +79,7 @@ class NFA: boost::noncopyable {
   NFA() :
       start_(START_STATE),
       final_(FINAL_STATE),
+      accepts_(TokenID::TOKEN_NUM),
       maxStateId_(0) {
   }
 
@@ -89,11 +92,11 @@ class NFA: boost::noncopyable {
 
   void AddTrans(State from, Sym sym, State to);
 
-  bool HasTrans(State from, Sym sym) const;
+  // Return boost::none if there's no transition tuple <from, sym, ?>
+  boost::optional<const std::vector<State> *> GetTrans(State from, Sym sym) const;
 
-  const std::vector<State> &GetTrans(State, Sym sym) const;
-
-  void AddAccept(State state, int data);
+  // Add the given state to accept states.
+  void AddAccept(State state, TokenID data);
 
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
@@ -120,6 +123,8 @@ class NFA: boost::noncopyable {
 
   Machine Mach() { return Machine(start_, final_); }
 
+  State GetTokenState(TokenID token) { return accepts_[token]; }
+
  private:
 
   // Transition tuple (State from, Sym symbol, State to)
@@ -133,8 +138,13 @@ class NFA: boost::noncopyable {
 
   State start_, final_;
 
-  std::unordered_map<State, int> accepts_;
-
+  // There's an one-to-one-relationship between TokenID and its accept state.
+  // accepts_ is set to TokenID::TOKEN_NUM in initialization.
+  //
+  // tokens_[accepts_state] = Token::SOME_TOKEN
+  // accepts_[Token::SOME_TOKEN] = accepts_state
+  std::unordered_map<State, TokenID> tokens_;
+  std::vector<State> accepts_;
 };
 
 } // namespace lexer

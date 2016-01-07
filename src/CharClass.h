@@ -40,8 +40,7 @@ class CharClass {
   // CharClass.
   void Dump() const;
 
-  Machine AddToNFA(NFA &nfa);
-  Machine AddToNFA(NFA &nfa, State st, State fn);
+  Machine AddToNFA(NFA &nfa, const Machine&ccl);
 
  private:
 

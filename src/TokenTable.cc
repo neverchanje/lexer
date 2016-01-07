@@ -4,15 +4,17 @@
 
 #include "TokenTable.h"
 
-using namespace lexer;
+namespace lexer {
 
 static const char *TokenIDStr[] = {
     "NAME",
     "WS",
-    "OPTWS"
+    "OPTWS",
     "NEWLINE"
 };
 
-const char *GetTokenID(TokenID type) {
+const char *GetToken(TokenID type) {
   return TokenIDStr[type];
 }
+
+} // naemspace lexer
