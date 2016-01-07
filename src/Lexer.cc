@@ -81,7 +81,10 @@ bool Lexer::Scan() {
   char c;
   while (true) {
     c = input_.Read();
-    break;
+    if (c == EOF) {
+      break;
+    }
+    printf("%c", c);
   }
   return true;
 }

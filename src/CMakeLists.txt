@@ -9,6 +9,7 @@ set(LEXER_SRC
         Scanner.h
         Generator.h
         main.cc
+        DisallowCopying.h
         )
 
 add_executable(lexer ${LEXER_SRC})

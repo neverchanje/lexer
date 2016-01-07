@@ -4,33 +4,39 @@
 
 #include <cerrno>
 #include <cstdlib>
+#include <cassert>
 #include "File.h"
 
 using namespace lexer;
 
-// -------------- Buffer --------------
+// -------------- FileBuf --------------
 
-Buffer::Buffer(size_t size) :
-    buf(size),
+FileBuf::FileBuf(size_t size) :
+    buf(size + 1),
     pos(0),
-    lineno(0),
-    column(0),
     bufsz(0) {
-  buf[0] = END_OF_BUFFER_CHAR;
 }
 
-void Buffer::Init() {
+void FileBuf::Init() {
   buf.clear();
   pos = 0;
-  lineno = column = 0;
   bufsz = 0;
-  buf[0] = END_OF_BUFFER_CHAR;
+}
+
+// TODO: Set pos to 0 in each Grow.
+// This design is hard to implement due to std::vector.
+inline void FileBuf::Grow() {
+  buf.resize(static_cast<size_t > (bufsz * BUFFER_GROW_FACTOR));
+}
+
+inline bool FileBuf::IsFull() {
+  return bufsz >= buf.capacity();
 }
 
 // -------------- File --------------
 
 File::~File() {
-  if (!file_) {
+  if (file_) {
     fclose(file_);
   }
 }
@@ -53,7 +59,7 @@ static FILE *fopenWrap(const char *filename, bool read) {
     fprintf(stderr,
             "Opening file %s %s %s",
             filename,
-            (read ? " in read mode: " : "in write mode: "),
+            (read ? "in read mode: " : "in write mode: "),
             strerror(errno));
     abort();
   }
@@ -77,23 +83,20 @@ void FileInput::Reset(const char *filename) {
 
 char FileInput::Read() {
   auto &data = buf_.buf;
-  size_t cap = data.capacity();
-  size_t bufsz = buf_.bufsz;
-  size_t pos = buf_.pos;
+  size_t &bufsz = buf_.bufsz;
+  size_t &pos = buf_.pos;
 
-  // if there's no buffer can be read
+  // Read from file when there's no buffer can be read.
   if (pos >= bufsz) {
-    if (cap <= bufsz) { // if the buffer has no room left
-      data.resize(static_cast<size_t >(cap * Buffer::BUFFER_GROW_FACTOR));
+    assert(data[pos] == FileBuf::END_OF_BUFFER || data[pos] == EOF);
+    if (buf_.IsFull()) {
+      buf_.Grow();
     }
     size_t read = fread(data.data(), 1, data.capacity() - pos, file_);
-    buf_.bufsz += read;
-    if (feof(file_)) {
-      buf_.bufsz++;
-      return data[buf_.pos++];
-    }
+    bufsz += read;
+    data[bufsz] = feof(file_) ? char(EOF) : FileBuf::END_OF_BUFFER;
   }
-  return data[buf_.pos++];
+  return data[pos++];
 }
 
 // -------------- FileOutput --------------
@@ -109,6 +112,6 @@ void FileOutput::Reset(const char *filename) {
   file_ = fopenWrap(filename, false);
 }
 
-size_t FileOutput::Write(Buffer &buf, size_t size) {
+size_t FileOutput::Write(FileBuf &buf, size_t size) {
   return fwrite(buf.buf.data(), 1, size, file_);
 }

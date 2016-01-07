@@ -17,7 +17,7 @@ class Scanner {
  public:
 
   Scanner() :
-      buf_(input_.GetBufferLval()) {
+      buf_(input_.GetBufferLVal()) {
   }
 
   // Returns false if an eof is hit.
@@ -32,7 +32,7 @@ class Scanner {
  protected:
   FileInput input_;
   std::string token_;
-  Buffer &buf_;
+  FileBuf &buf_;
 };
 
 } //namespace lexer
