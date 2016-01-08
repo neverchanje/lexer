@@ -141,17 +141,15 @@ Machine NFA::MakeOpt(Machine mach) {
 }
 
 Machine NFA::MakeOr(Machine first, Machine second) {
-  State start = MakeState();
-  State final = MakeState();
-  AddTrans(start, SYM_EPSILON, first.start);
-  AddTrans(start, SYM_EPSILON, second.start);
-  AddTrans(first.final, SYM_EPSILON, final);
-  AddTrans(second.final, SYM_EPSILON, final);
-  return Machine(start, final);
+// it doesn't make sense to create a self-loop with epsilon.
+  if (first.start != second.start)
+    AddTrans(first.start, SYM_EPSILON, second.start);
+  if (first.final != second.final)
+    AddTrans(second.final, SYM_EPSILON, first.final);
+  return first;
 }
 
 void NFA::AddAccept(State accept, TokenID data) {
-  AddTrans(accept, SYM_EPSILON, final_);
   tokens_[accept] = data;
   accepts_[data] = accept;
 }

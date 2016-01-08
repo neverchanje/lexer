@@ -7,23 +7,19 @@
 
 #include <unordered_map>
 #include <string>
+#include "NFA.h"
 
 namespace lexer {
 
+class Machine;
+
+// reserved
 enum TokenID {
   NAME,
   WS,
   OPTWS,
   NEWLINE,
-  DEF_OR, // |
-  DEF_PLUS, // +
-  DEF_OPT, // ?
-  DEF_STAR, // *
-  LEFT_BRACKET, // (
-  RIGHT_BRACKET, // )
-  DEF_CC_START, // [
-  DEF_CC_END,  // ]
-  DEF_CC_CONNECTOR, // -
+  DEF_VALID_LETTER, // a-zA-Z0-9|+?*()[]
   LOWER_CASE_LETTER, // a-z
   UPPER_CASE_LETTER, // A-Z
   DIGIT, // 0-9
@@ -37,6 +33,8 @@ const char *GetToken(TokenID type);
  * TokenTable["Foo123"] = TokenID::NAME
  */
 typedef std::unordered_map<std::string, TokenID> TokenTable;
+
+Machine ToMachine(NFA &nfa, TokenID token);
 
 } // namespace lexer
 

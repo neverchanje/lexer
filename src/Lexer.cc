@@ -40,7 +40,7 @@ void Lexer::addDefSect() {
     //---- add rule of NAME into NFA ---
     // NAME <= [_a-zA-Z][a-zA-Z0-9_-]*
 
-    Machine m = nfa_.Mach();
+    Machine m(nfa_.START_STATE, nfa_.MakeState());
 
     CharClass nccl1;
     Machine m1(m.start, nfa_.MakeState());
@@ -86,10 +86,6 @@ void Lexer::addDefSect() {
     nfa_.AddTrans(m.start, '\n', m.final);
     m = nfa_.MakeOpt(m);
     nfa_.AddAccept(m.final, TokenID::NEWLINE);
-  }
-
-  {
-
   }
 }
 

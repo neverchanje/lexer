@@ -4,6 +4,7 @@
 
 #ifndef LEXER_DFA_H
 
+#include "DisallowCopying.h"
 #include <unordered_map>
 
 namespace lexer {
@@ -14,6 +15,7 @@ typedef int SymbolID;
  * Deterministic Finite Automaton
  */
 class DFA {
+  __DISALLOW_COPYING__(DFA);
 
  public:
 

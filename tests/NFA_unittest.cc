@@ -49,7 +49,6 @@ TEST(NFA_ToDFA_01, NFA_ToDFA_Test) {
   nfa.AddTrans(NFA::START_STATE, 'b', s2);
   nfa.AddTrans(s1, SYM_EPSILON, s3);
   nfa.AddTrans(s2, SYM_EPSILON, s3);
-  nfa.AddTrans(s3, SYM_EPSILON, NFA::FINAL_STATE);
 
 //  <from:3, sym:257, to:-1>
 //  <from:2, sym:257, to:3>
@@ -87,13 +86,11 @@ TEST(NFA_ToDFA_02, NFA_ToDFA_Test) {
   nfa.AddTrans(s[6], SYM_EPSILON, s[7]);
   nfa.AddTrans(s[7], 'a', s[8]);
   nfa.AddTrans(s[8], 'b', s[9]);
-  nfa.AddTrans(s[9], 'b', NFA::FINAL_STATE);
 
   EpsClosure E;
   nfa.GetEpsClosure(std::vector<State>({NFA::START_STATE}), E);
   EXPECT_EQ(StateSet({0, 1, 2, 4, 7}), E);
 
-//  <from:9, sym:98, to:-1>
 //  <from:8, sym:98, to:9>
 //  <from:7, sym:97, to:8>
 //  <from:6, sym:257, to:7>

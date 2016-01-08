@@ -59,6 +59,11 @@ class NFA {
     // Each Machine contains only single start and final state.
     State start, final;
 
+    Machine() :
+        start(0),
+        final(0) {
+    }
+
     Machine(State st, State fn) :
         start(st),
         final(fn) {
@@ -73,12 +78,10 @@ class NFA {
  public:
 
   static const State START_STATE = 0;
-  static const State FINAL_STATE = -1;
 
   // NFA is created with a start state and a final state.
   NFA() :
       start_(START_STATE),
-      final_(FINAL_STATE),
       accepts_(TokenID::TOKEN_NUM),
       maxStateId_(0) {
   }
@@ -101,8 +104,6 @@ class NFA {
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
 
-  int NumOfStates() const { return maxStateId_ + 2; }
-
   // Make a new state and add it into the NFA.
   // The index of the first state is 1.
   State MakeState() { return ++maxStateId_; }
@@ -116,12 +117,11 @@ class NFA {
   Machine MakeOpt(Machine mach);
 
   // Equivalent with '|' in regex.
+  // MakeOr returns the value of first, second is add as a sub-machine of first.
   Machine MakeOr(Machine first, Machine second);
 
   // Equivalent with '+' in regex.
   Machine MakePosClosure(Machine mach);
-
-  Machine Mach() { return Machine(start_, final_); }
 
   State GetTokenState(TokenID token) { return accepts_[token]; }
 
@@ -136,7 +136,7 @@ class NFA {
   // It also indicates the number of current states.
   int maxStateId_;
 
-  State start_, final_;
+  State start_;
 
   // There's an one-to-one-relationship between TokenID and its accept state.
   // accepts_ is set to TokenID::TOKEN_NUM in initialization.
