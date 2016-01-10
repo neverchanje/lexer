@@ -5,6 +5,7 @@ add_subdirectory(lib/gtest-1.7.0)
 
 add_executable(NFAUnitTest
         NFA_unittest.cc
+        DFATestHelper.h
         ${LEXER_SOURCE_DIR}/NFA.cc
         ${LEXER_SOURCE_DIR}/DFA.cc)
 target_link_libraries(NFAUnitTest gtest gtest_main)

@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 #include "DFA.h"
 #include "NFA.h"
+#include "DFATestHelper.h"
 
 using namespace lexer;
 
@@ -27,7 +28,7 @@ TEST(NFA_EpsClosure, NFA_EpsClosure_Test) {
 //  <from:2, sym:257, to:4>
 //  <from:1, sym:257, to:3>
 //  <from:1, sym:257, to:2>
-  nfa.Dump();
+//  nfa.Dump();
 
   NFA::EpsClosure eps;
   nfa.GetEpsClosure(std::vector<NFA::State>({1}), eps);
@@ -37,31 +38,50 @@ TEST(NFA_EpsClosure, NFA_EpsClosure_Test) {
   EXPECT_EQ(ts, eps);
 }
 
-TEST(NFA_ToDFA_01, NFA_ToDFA_Test) {
+class TestNFA1: public ::testing::Test {
+ protected:
 
-  NFA nfa;
+  virtual void SetUp() {
+    NFA::State s1 = nfa.MakeState(),
+        s2 = nfa.MakeState(),
+        s3 = nfa.MakeState();
 
-  NFA::State s1 = nfa.MakeState(),
-      s2 = nfa.MakeState(),
-      s3 = nfa.MakeState();
+    nfa.AddTrans(NFA::START_STATE, 'a', s1);
+    nfa.AddTrans(NFA::START_STATE, 'b', s2);
+    nfa.AddTrans(s1, NFA::SYM_EPSILON, s3);
+    nfa.AddTrans(s2, NFA::SYM_EPSILON, s3);
 
-  nfa.AddTrans(NFA::START_STATE, 'a', s1);
-  nfa.AddTrans(NFA::START_STATE, 'b', s2);
-  nfa.AddTrans(s1, NFA::SYM_EPSILON, s3);
-  nfa.AddTrans(s2, NFA::SYM_EPSILON, s3);
-
-//  <from:3, sym:257, to:-1>
 //  <from:2, sym:257, to:3>
 //  <from:1, sym:257, to:3>
 //  <from:0, sym:98, to:2>
 //  <from:0, sym:97, to:1>
-  nfa.Dump();
+//  nfa.Dump();
+  }
 
-  DFA dfa = nfa.ToDFA();
+  NFA nfa;
+};
 
-//  <from:0, sym:97, to:2>
+TEST_F(TestNFA1, NFA_GetEpsClosure) {
+  NFA::StateSet ts;
+  nfa.GetEpsClosure({0}, ts);
+  EXPECT_EQ(ts, NFA::StateSet({0}));
+
+  nfa.GetEpsClosure({1}, ts);
+  EXPECT_EQ(ts, NFA::StateSet({1, 3}));
+
+  nfa.GetEpsClosure({2}, ts);
+  EXPECT_EQ(ts, NFA::StateSet({2, 3}));
+}
+
+TEST_F(TestNFA1, NFA_ToDFA_01) {
+  DFA actual = nfa.ToDFA();
+
 //  <from:0, sym:98, to:1>
-  dfa.Dump();
+//  <from:0, sym:97, to:2>
+  DFA expect;
+  expect.AddTrans(0, 'a', 1);
+  expect.AddTrans(0, 'b', 2);
+  EXPECT_PRED_FORMAT2 (AssertDFACmp, expect, actual);
 }
 
 TEST(NFA_ToDFA_02, NFA_ToDFA_Test) {
@@ -107,10 +127,5 @@ TEST(NFA_ToDFA_02, NFA_ToDFA_Test) {
 
   DFA dfa = nfa.ToDFA();
 
-//  <from:0, sym:4, to:1>
-//  <from:0, sym:2, to:1>
-//  <from:0, sym:7, to:1>
-//  <from:0, sym:1, to:1>
-//  <from:0, sym:0, to:1>
   dfa.Dump();
 }

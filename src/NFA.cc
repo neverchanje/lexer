@@ -32,17 +32,38 @@ findInDStates(const StateSetTable &table, DFA::State id) {
   return table.begin()->first;
 }
 
+void NFA::getAllSymsFromT(std::vector<NFA::Sym> &symlist,
+                          const NFA::StateSet &T) const {
+  symlist.clear();
+  for (State st : T) {
+    auto found = trans1_.find(st);
+    if (found != trans1_.end()) {
+      for (const auto &it : (*found).second) {
+        if (it.first != SYM_EPSILON)
+          symlist.push_back(it.first);
+      }
+    }
+  }
+  std::sort(symlist.begin(), symlist.end());
+  auto last = std::unique(symlist.begin(), symlist.end());
+  symlist.erase(last, symlist.end());
+}
+
+//static inline std::vector<NFA::State>
+//stateSetToVec(const NFA::StateSet &sset) {
+//  return std::vector<NFA::State>(sset.begin(), sset.end());
+//}
+
 DFA NFA::ToDFA() const {
   DFA dfa;
   EpsClosure E;
-
   std::vector<State> unmarked;
   StateSetTable table;
   State maxID = 0;
   StateSet U;
   std::vector<Sym> symlist;
 
-  GetEpsClosure(std::vector<State>({start_}), E);
+  GetEpsClosure(std::vector<State>({START_STATE}), E);
   table[E] = maxID;
   unmarked.push_back(maxID++);
 
@@ -52,27 +73,20 @@ DFA NFA::ToDFA() const {
 
     const StateSet &T = findInDStates(table, Tid);
 
-    // get all symbols out from T
-    symlist.clear();
-    for (auto st : T) {
-      Sym a = trans1_.find(st)->first;
-      if (a != SYM_EPSILON) {
-        symlist.push_back(a);
-      }
-    }
+    getAllSymsFromT(symlist, T);
 
     for (auto a : symlist) {
-      E.clear();
       U.clear();
 
       // get U
-      for (auto t : T) {
+      for (State t : T) {
         auto opt_pvec = GetTrans(t, a);
         if (!opt_pvec) continue;
 
         const auto &vec = *(*opt_pvec);
+
         GetEpsClosure(vec, E);
-        U.insert(vec.begin(), vec.end());
+        U.insert(E.begin(), E.end());
       }
 
       // if U is not in DStates
@@ -92,6 +106,8 @@ DFA NFA::ToDFA() const {
 }
 
 void NFA::GetEpsClosure(const std::vector<State> &T, EpsClosure &E) const {
+  if (!E.empty()) E.clear();
+
   std::vector<State> S = T;
 
   E.clear();
@@ -178,5 +194,5 @@ NFA::GetTrans(NFA::State from, NFA::Sym sym) const {
   if (found2 == found1->second.end()) {
     return boost::none;
   }
-  return &found2->second;
+  return &(found2->second);
 }

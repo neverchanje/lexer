@@ -81,7 +81,6 @@ class NFA {
 
   // NFA is created with a start state and a final state.
   NFA() :
-      start_(START_STATE),
       maxStateId_(0) {
   }
 
@@ -132,7 +131,8 @@ class NFA {
   // It also indicates the number of current states.
   int maxStateId_;
 
-  State start_;
+  void getAllSymsFromT(std::vector<Sym> &symlist, const StateSet &T) const;
+
 };
 
 } // namespace lexer

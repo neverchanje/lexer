@@ -3,6 +3,7 @@
 //
 
 #ifndef LEXER_DFA_H
+#define LEXER_DFA_H
 
 #include "DisallowCopying.h"
 #include <unordered_map>
