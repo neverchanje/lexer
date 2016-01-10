@@ -63,6 +63,12 @@ class RegexpParser {
   // (DEBUG)
   const NFA &GetNFA() const { return nfa_; }
 
+  void DoEndJob();
+
+  void DoAlternation();
+
+  void DoConcatenation();
+
  private:
 
   NFA nfa_;

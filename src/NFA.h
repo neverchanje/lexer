@@ -90,7 +90,7 @@ class NFA {
   void GetEpsClosure(const std::vector<State> &T, EpsClosure &E) const;
 
   // Subset construction algorithm.
-  DFA ToDFA();
+  DFA ToDFA() const;
 
   void AddTrans(State from, Sym sym, State to);
 
@@ -106,18 +106,20 @@ class NFA {
 
   // Convert a machine into a closure.
   // Equivalent with '*' in regex.
-  void MakeClosure(const Machine &mach);
+  Machine MakeClosure(const Machine &mach);
 
   // Make a machine optional.
   // Equivalent with '?' in regex.
-  void MakeOpt(const Machine &mach);
+  Machine MakeOpt(const Machine &mach);
 
   // Equivalent with '|' in regex.
   // MakeOr returns the value of first, second is add as a sub-machine of first.
-  void MakeOr(const Machine &first, const Machine &second);
+  // first must be irrelevant with second, which means that first has no transition
+  // out to second, and vice versa.
+  Machine MakeOr(const Machine &first, const Machine &second);
 
   // Equivalent with '+' in regex.
-  void MakePosClosure(const Machine &mach);
+  Machine MakePosClosure(const Machine &mach);
 
  private:
 

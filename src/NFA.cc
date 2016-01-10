@@ -32,7 +32,7 @@ findInDStates(const StateSetTable &table, DFA::State id) {
   return table.begin()->first;
 }
 
-DFA NFA::ToDFA() {
+DFA NFA::ToDFA() const {
   DFA dfa;
   EpsClosure E;
 
@@ -131,25 +131,41 @@ void NFA::Dump() const {
   fprintf(stderr, "------- Ending of dumping the NFA. -------\n");
 }
 
-void NFA::MakeOpt(const Machine &mach) {
-  AddTrans(mach.start, SYM_EPSILON, mach.final);
+Machine NFA::MakeOpt(const Machine &mach) {
+  State start = MakeState();
+  State final = MakeState();
+  AddTrans(start, SYM_EPSILON, mach.start);
+  AddTrans(mach.final, SYM_EPSILON, final);
+  AddTrans(start, SYM_EPSILON, final);
+  return Machine(start, final);
 }
 
-void NFA::MakeOr(const Machine &first, const Machine &second) {
+Machine NFA::MakeOr(const Machine &first, const Machine &second) {
 // it doesn't make sense to create a self-loop with epsilon.
   if (first.start != second.start)
     AddTrans(first.start, SYM_EPSILON, second.start);
   if (first.final != second.final)
     AddTrans(second.final, SYM_EPSILON, first.final);
+  return first;
 }
 
-void NFA::MakeClosure(const Machine &mach) {
-  AddTrans(mach.start, SYM_EPSILON, mach.final);
-  AddTrans(mach.final, SYM_EPSILON, mach.start);
+Machine NFA::MakeClosure(const Machine &mach) {
+  State start = MakeState();
+  State final = MakeState();
+  AddTrans(start, SYM_EPSILON, mach.start);
+  AddTrans(mach.final, SYM_EPSILON, final);
+  AddTrans(final, SYM_EPSILON, start);
+  AddTrans(start, SYM_EPSILON, final);
+  return Machine(start, final);
 }
 
-void NFA::MakePosClosure(const Machine &mach) {
-  AddTrans(mach.final, SYM_EPSILON, mach.start);
+Machine NFA::MakePosClosure(const Machine &mach) {
+  State start = MakeState();
+  State final = MakeState();
+  AddTrans(start, SYM_EPSILON, mach.start);
+  AddTrans(mach.final, SYM_EPSILON, final);
+  AddTrans(final, SYM_EPSILON, start);
+  return Machine(start, final);
 }
 
 boost::optional<const std::vector<NFA::State> *>
