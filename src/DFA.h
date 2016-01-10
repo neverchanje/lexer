@@ -9,17 +9,16 @@
 
 namespace lexer {
 
-typedef int SymbolID;
-
 /**
  * Deterministic Finite Automaton
  */
 class DFA {
-  __DISALLOW_COPYING__(DFA);
 
  public:
 
   typedef int State;
+
+  typedef int SymbolID;
 
   static const State START_STATE = 0;
 

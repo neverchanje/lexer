@@ -8,43 +8,43 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include <string>
 #include <boost/optional.hpp>
-
-#include "LexerDef.h"
-#include "TokenTable.h"
-#include "DisallowCopying.h"
 
 namespace lexer {
 
 class DFA;
 
-typedef std::unordered_set<State> StateSet;
-
-/**
- * Definition of epsilon closure in flex:
- * The epsilon closure is the set of all states reachable by an arbitrary
- * number of epsilon transitions, which themselves do not have epsilon
- * transitions going out, unioned with the set of states which have non-null
- * accepting numbers.
- *
- * Since searching and insertion are the most usual operations in the manipulation
- * of EpsClosure, we use std::unordered_set, which is time-efficient in both of two.
- */
-typedef StateSet EpsClosure;
-
-/**
- * Mark the symbol epsilon.
- */
-const int SYM_EPSILON = 257;
-
 /**
  * Non-deterministic Finite Automata
  */
 class NFA {
-  __DISALLOW_COPYING__(NFA);
 
 // TODO: Optimization: Merge the states which have only epsilon transitions.
+
+ public:
+
+  typedef int State;
+  typedef int Sym;
+  typedef std::unordered_set<State> StateSet;
+
+  /**
+   * Definition of epsilon closure in flex:
+   * The epsilon closure is the set of all states reachable by an arbitrary
+   * number of epsilon transitions, which themselves do not have epsilon
+   * transitions going out, unioned with the set of states which have non-null
+   * accepting numbers.
+   *
+   * Since searching and insertion are the most usual operations in the manipulation
+   * of EpsClosure, we use std::unordered_set, which is time-efficient in both of two.
+   */
+  typedef StateSet EpsClosure;
+
+  /**
+   * Mark the symbol epsilon.
+   */
+  static const int SYM_EPSILON = 257;
+
+  static const State UNDEFINED = -1;
 
  public:
 
@@ -60,8 +60,8 @@ class NFA {
     State start, final;
 
     Machine() :
-        start(0),
-        final(0) {
+        start(UNDEFINED),
+        final(UNDEFINED) {
     }
 
     Machine(State st, State fn) :
@@ -82,7 +82,6 @@ class NFA {
   // NFA is created with a start state and a final state.
   NFA() :
       start_(START_STATE),
-      accepts_(TokenID::TOKEN_NUM),
       maxStateId_(0) {
   }
 
@@ -98,9 +97,6 @@ class NFA {
   // Return boost::none if there's no transition tuple <from, sym, ?>
   boost::optional<const std::vector<State> *> GetTrans(State from, Sym sym) const;
 
-  // Add the given state to accept states.
-  void AddAccept(State state, TokenID data);
-
   // Debugging method to write out all of the transitions in the NFA.
   void Dump() const;
 
@@ -110,20 +106,18 @@ class NFA {
 
   // Convert a machine into a closure.
   // Equivalent with '*' in regex.
-  Machine MakeClosure(Machine mach);
+  void MakeClosure(const Machine &mach);
 
   // Make a machine optional.
   // Equivalent with '?' in regex.
-  Machine MakeOpt(Machine mach);
+  void MakeOpt(const Machine &mach);
 
   // Equivalent with '|' in regex.
   // MakeOr returns the value of first, second is add as a sub-machine of first.
-  Machine MakeOr(Machine first, Machine second);
+  void MakeOr(const Machine &first, const Machine &second);
 
   // Equivalent with '+' in regex.
-  Machine MakePosClosure(Machine mach);
-
-  State GetTokenState(TokenID token) { return accepts_[token]; }
+  void MakePosClosure(const Machine &mach);
 
  private:
 
@@ -137,14 +131,6 @@ class NFA {
   int maxStateId_;
 
   State start_;
-
-  // There's an one-to-one-relationship between TokenID and its accept state.
-  // accepts_ is set to TokenID::TOKEN_NUM in initialization.
-  //
-  // tokens_[accepts_state] = Token::SOME_TOKEN
-  // accepts_[Token::SOME_TOKEN] = accepts_state
-  std::unordered_map<State, TokenID> tokens_;
-  std::vector<State> accepts_;
 };
 
 } // namespace lexer

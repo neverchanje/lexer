@@ -1503,7 +1503,7 @@ func_convert_core_file_wine_to_w32 ()
 
 
 # func_convert_core_path_wine_to_w32 ARG
-# Helper function used by path conversion functions when $build is *nix, and
+# RegexpHelper function used by path conversion functions when $build is *nix, and
 # $host is mingw, cygwin, or some other w32 environment. Relies on a correctly
 # configured wine environment available, with the winepath program in $build's
 # $PATH. Assumes ARG has no leading or trailing path separator characters.

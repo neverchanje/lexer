@@ -6,8 +6,6 @@
 
 using namespace lexer;
 
-typedef CharClass::Machine Machine;
-
 void CharClass::Add(char c) {
   charset_.set(static_cast<size_t>(c));
 }
@@ -46,7 +44,7 @@ CharClass::CharClass(const std::string &set) {
   }
 }
 
-Machine CharClass::AddToNFA(NFA &nfa, const Machine &ccl) {
+NFA::Machine CharClass::AddToNFA(NFA &nfa, const NFA::Machine &ccl) {
   for (int i = 0; i < CHAR_SIZE; i++) {
     if (charset_.test(size_t(i))) {
       nfa.AddTrans(ccl.start, i, ccl.final);

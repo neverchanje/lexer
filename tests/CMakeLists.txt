@@ -8,3 +8,12 @@ add_executable(NFAUnitTest
         ${LEXER_SOURCE_DIR}/NFA.cc
         ${LEXER_SOURCE_DIR}/DFA.cc)
 target_link_libraries(NFAUnitTest gtest gtest_main)
+
+add_executable(RegexpParserUnitTest
+        RegexpParser_unittest.cc
+        ${LEXER_SOURCE_DIR}/NFA.cc
+        ${LEXER_SOURCE_DIR}/DFA.cc
+        ${LEXER_SOURCE_DIR}/RegexpParser.cc
+        ${LEXER_SOURCE_DIR}/CharClass.cc
+        )
+target_link_libraries(RegexpParserUnitTest gtest gtest_main)

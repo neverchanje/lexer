@@ -9,18 +9,18 @@
 
 using namespace lexer;
 
-// cannot be deleted
 typedef NFA::Machine Machine;
 
 struct StateSetHasher {
-  size_t operator()(const StateSet &val) const {
+  size_t operator()(const NFA::StateSet &val) const {
     return boost::hash_range(val.begin(), val.end());
   }
 };
 
-typedef std::unordered_map<StateSet, State, StateSetHasher> StateSetTable;
+typedef std::unordered_map<NFA::StateSet, DFA::State, StateSetHasher> StateSetTable;
 
-static const StateSet &findInDStates(const StateSetTable &table, State id) {
+static const NFA::StateSet &
+findInDStates(const StateSetTable &table, DFA::State id) {
   bool found = false;
   for (auto it = table.begin(); it != table.end(); it++) {
     if (it->second == id) {
@@ -131,40 +131,29 @@ void NFA::Dump() const {
   fprintf(stderr, "------- Ending of dumping the NFA. -------\n");
 }
 
-Machine NFA::MakeOpt(Machine mach) {
-  State start = MakeState();
-  State final = MakeState();
-  AddTrans(start, SYM_EPSILON, mach.start);
-  AddTrans(mach.final, SYM_EPSILON, final);
-  AddTrans(start, SYM_EPSILON, final);
-  return Machine(start, final);
+void NFA::MakeOpt(const Machine &mach) {
+  AddTrans(mach.start, SYM_EPSILON, mach.final);
 }
 
-Machine NFA::MakeOr(Machine first, Machine second) {
+void NFA::MakeOr(const Machine &first, const Machine &second) {
 // it doesn't make sense to create a self-loop with epsilon.
   if (first.start != second.start)
     AddTrans(first.start, SYM_EPSILON, second.start);
   if (first.final != second.final)
     AddTrans(second.final, SYM_EPSILON, first.final);
-  return first;
 }
 
-void NFA::AddAccept(State accept, TokenID data) {
-  tokens_[accept] = data;
-  accepts_[data] = accept;
-}
-
-Machine NFA::MakeClosure(Machine mach) {
-  return MakeOpt(MakePosClosure(mach));
-}
-
-Machine NFA::MakePosClosure(Machine mach) {
+void NFA::MakeClosure(const Machine &mach) {
+  AddTrans(mach.start, SYM_EPSILON, mach.final);
   AddTrans(mach.final, SYM_EPSILON, mach.start);
-  return mach;
 }
 
-boost::optional<const std::vector<State> *>
-NFA::GetTrans(State from, Sym sym) const {
+void NFA::MakePosClosure(const Machine &mach) {
+  AddTrans(mach.final, SYM_EPSILON, mach.start);
+}
+
+boost::optional<const std::vector<NFA::State> *>
+NFA::GetTrans(NFA::State from, NFA::Sym sym) const {
   auto found1 = trans1_.find(from);
   if (found1 == trans1_.end())
     return boost::none;

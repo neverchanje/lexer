@@ -11,14 +11,14 @@ using namespace lexer;
 TEST(NFA_EpsClosure, NFA_EpsClosure_Test) {
 
   NFA nfa;
-  State s[5];
+  NFA::State s[5];
 
   for (int i = 0; i < 5; i++)
     s[i] = nfa.MakeState();
 
-  nfa.AddTrans(s[0], SYM_EPSILON, s[1]);
-  nfa.AddTrans(s[0], SYM_EPSILON, s[2]);
-  nfa.AddTrans(s[1], SYM_EPSILON, s[3]);
+  nfa.AddTrans(s[0], NFA::SYM_EPSILON, s[1]);
+  nfa.AddTrans(s[0], NFA::SYM_EPSILON, s[2]);
+  nfa.AddTrans(s[1], NFA::SYM_EPSILON, s[3]);
   nfa.AddTrans(s[1], 'a', s[4]);
   nfa.AddTrans(s[2], 'a', s[4]);
 
@@ -29,11 +29,11 @@ TEST(NFA_EpsClosure, NFA_EpsClosure_Test) {
 //  <from:1, sym:257, to:2>
   nfa.Dump();
 
-  EpsClosure eps;
-  nfa.GetEpsClosure(std::vector<State>({1}), eps);
-  EpsClosure ts({1, 2, 3, 4});
+  NFA::EpsClosure eps;
+  nfa.GetEpsClosure(std::vector<NFA::State>({1}), eps);
+  NFA::EpsClosure ts({1, 2, 3, 4});
 
-  EXPECT_EQ(ts, StateSet({1, 2, 3, 4}));
+  EXPECT_EQ(ts, NFA::StateSet({1, 2, 3, 4}));
   EXPECT_EQ(ts, eps);
 }
 
@@ -41,14 +41,14 @@ TEST(NFA_ToDFA_01, NFA_ToDFA_Test) {
 
   NFA nfa;
 
-  State s1 = nfa.MakeState(),
+  NFA::State s1 = nfa.MakeState(),
       s2 = nfa.MakeState(),
       s3 = nfa.MakeState();
 
   nfa.AddTrans(NFA::START_STATE, 'a', s1);
   nfa.AddTrans(NFA::START_STATE, 'b', s2);
-  nfa.AddTrans(s1, SYM_EPSILON, s3);
-  nfa.AddTrans(s2, SYM_EPSILON, s3);
+  nfa.AddTrans(s1, NFA::SYM_EPSILON, s3);
+  nfa.AddTrans(s2, NFA::SYM_EPSILON, s3);
 
 //  <from:3, sym:257, to:-1>
 //  <from:2, sym:257, to:3>
@@ -69,27 +69,27 @@ TEST(NFA_ToDFA_02, NFA_ToDFA_Test) {
 
   NFA nfa;
 
-  State s[11];
+  NFA::State s[11];
   for (int i = 1; i <= 9; ++i) {
     s[i] = nfa.MakeState();
   }
 
-  nfa.AddTrans(NFA::START_STATE, SYM_EPSILON, s[1]);
-  nfa.AddTrans(NFA::START_STATE, SYM_EPSILON, s[7]);
-  nfa.AddTrans(s[1], SYM_EPSILON, s[2]);
-  nfa.AddTrans(s[1], SYM_EPSILON, s[4]);
+  nfa.AddTrans(NFA::START_STATE, NFA::SYM_EPSILON, s[1]);
+  nfa.AddTrans(NFA::START_STATE, NFA::SYM_EPSILON, s[7]);
+  nfa.AddTrans(s[1], NFA::SYM_EPSILON, s[2]);
+  nfa.AddTrans(s[1], NFA::SYM_EPSILON, s[4]);
   nfa.AddTrans(s[2], 'a', s[3]);
   nfa.AddTrans(s[4], 'b', s[5]);
-  nfa.AddTrans(s[3], SYM_EPSILON, s[6]);
-  nfa.AddTrans(s[5], SYM_EPSILON, s[6]);
-  nfa.AddTrans(s[6], SYM_EPSILON, s[1]);
-  nfa.AddTrans(s[6], SYM_EPSILON, s[7]);
+  nfa.AddTrans(s[3], NFA::SYM_EPSILON, s[6]);
+  nfa.AddTrans(s[5], NFA::SYM_EPSILON, s[6]);
+  nfa.AddTrans(s[6], NFA::SYM_EPSILON, s[1]);
+  nfa.AddTrans(s[6], NFA::SYM_EPSILON, s[7]);
   nfa.AddTrans(s[7], 'a', s[8]);
   nfa.AddTrans(s[8], 'b', s[9]);
 
-  EpsClosure E;
-  nfa.GetEpsClosure(std::vector<State>({NFA::START_STATE}), E);
-  EXPECT_EQ(StateSet({0, 1, 2, 4, 7}), E);
+  NFA::EpsClosure E;
+  nfa.GetEpsClosure(std::vector<NFA::State>({NFA::START_STATE}), E);
+  EXPECT_EQ(NFA::StateSet({0, 1, 2, 4, 7}), E);
 
 //  <from:8, sym:98, to:9>
 //  <from:7, sym:97, to:8>

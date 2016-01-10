@@ -10,19 +10,19 @@
 
 namespace lexer {
 
+const size_t CHAR_SIZE = 256;
+
 /**
  * Character class.
  */
 class CharClass {
  public:
 
-  typedef NFA::Machine Machine;
-
   CharClass() :
       negated_(false) {
   }
 
-  CharClass(const std::string& set);
+  CharClass(const std::string &set);
 
   // Add a single character c into a CharClass.
   void Add(char c);
@@ -40,7 +40,7 @@ class CharClass {
   // CharClass.
   void Dump() const;
 
-  Machine AddToNFA(NFA &nfa, const Machine&ccl);
+  NFA::Machine AddToNFA(NFA &nfa, const NFA::Machine &ccl);
 
  private:
 
