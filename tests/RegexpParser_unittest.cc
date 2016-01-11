@@ -18,7 +18,7 @@ TEST(ParseLiteral, Basic) {
 //  <from:5, sym:99, to:6>
 //  <from:3, sym:98, to:4>
 //  <from:1, sym:97, to:2>
-  parser.GetNFA().Dump();
+  parser.GetNFA().ToDFA().Dump();
 }
 
 TEST(ParseUniqueOperator, Basic) {
@@ -40,7 +40,7 @@ TEST(ParseUniqueOperator, Basic) {
 //  <from:3, sym:257, to:4>
 //  <from:3, sym:257, to:1>
 //  <from:1, sym:97, to:2>
-  parser.GetNFA().Dump();
+  parser.GetNFA().ToDFA().Dump();
 }
 
 TEST(ParseOr, Basic) {
@@ -51,7 +51,7 @@ TEST(ParseOr, Basic) {
 //  <from:3, sym:257, to:1>
 //  <from:3, sym:99, to:4>
 //  <from:1, sym:98, to:2>
-  parser.GetNFA().Dump();
+  parser.GetNFA().ToDFA().Dump();
 }
 
 TEST(ParseOrParen, Basic) {
@@ -66,5 +66,5 @@ TEST(ParseOrParen, Basic) {
 //  <from:3, sym:257, to:4>
 //  <from:3, sym:257, to:1>
 //  <from:1, sym:97, to:2>
-  parser.GetNFA().Dump();
+  parser.GetNFA().ToDFA().Dump();
 }

@@ -11,9 +11,12 @@ using namespace lexer;
 
 typedef NFA::Machine Machine;
 
+// TODO: use a better hasher
 struct StateSetHasher {
   size_t operator()(const NFA::StateSet &val) const {
-    return boost::hash_range(val.begin(), val.end());
+    std::vector<NFA::State> arr(val.begin(), val.end());
+    std::sort(arr.begin(), arr.end());
+    return boost::hash_value(arr);
   }
 };
 
@@ -48,11 +51,6 @@ void NFA::getAllSymsFromT(std::vector<NFA::Sym> &symlist,
   auto last = std::unique(symlist.begin(), symlist.end());
   symlist.erase(last, symlist.end());
 }
-
-//static inline std::vector<NFA::State>
-//stateSetToVec(const NFA::StateSet &sset) {
-//  return std::vector<NFA::State>(sset.begin(), sset.end());
-//}
 
 DFA NFA::ToDFA() const {
   DFA dfa;

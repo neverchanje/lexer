@@ -125,7 +125,37 @@ TEST(NFA_ToDFA_02, NFA_ToDFA_Test) {
 //  <from:0, sym:257, to:1>
   nfa.Dump();
 
-  DFA dfa = nfa.ToDFA();
+//  DFA dfa = nfa.ToDFA();
+//  dfa.Dump();
+}
 
-  dfa.Dump();
+TEST(NFA_ToDFA_03, NFA_ToDFA_Test) {
+  NFA nfa;
+
+  NFA::State s[7];
+  for (int i = 1; i <= 6; ++i) {
+    s[i] = nfa.MakeState();
+  }
+
+  nfa.AddTrans(0, NFA::SYM_EPSILON, 5);
+  nfa.AddTrans(5, NFA::SYM_EPSILON, 3);
+  nfa.AddTrans(5, 'b', 6);
+  nfa.AddTrans(4, NFA::SYM_EPSILON, 6);
+  nfa.AddTrans(3, NFA::SYM_EPSILON, 1);
+  nfa.AddTrans(3, NFA::SYM_EPSILON, 4);
+  nfa.AddTrans(4, NFA::SYM_EPSILON, 3);
+  nfa.AddTrans(2, NFA::SYM_EPSILON, 4);
+  nfa.AddTrans(1, 'a', 2);
+
+  NFA::EpsClosure ts;
+  nfa.GetEpsClosure({0}, ts);
+  EXPECT_EQ(NFA::EpsClosure({0, 5, 3, 1, 4, 6}), ts);
+
+  nfa.GetEpsClosure({6}, ts);
+  EXPECT_EQ(NFA::EpsClosure({6}), ts);
+
+  nfa.GetEpsClosure({2}, ts);
+  EXPECT_EQ(NFA::EpsClosure({1, 2, 4, 3, 6}), ts);
+
+  nfa.ToDFA().Dump();
 }
