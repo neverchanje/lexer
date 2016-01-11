@@ -10,6 +10,7 @@
 #include <stack>
 #include "DisallowCopying.h"
 #include "CharClass.h"
+#include "DFA.h"
 
 namespace lexer {
 
@@ -42,36 +43,44 @@ class RegexpParser {
   // RegexpParser::Parse returns an NFA constructed by the given regular expression.
   // The construction maintains a stack of Machines,
   // Scanning one of the symbols in star*, plus+, opt? will merge the
-  NFA &Parse(const std::string &s);
-
-  void ParseLiteral(char c);
-
-  void ParseCharClass(const char *t);
-
-  void ParseVerticalBar();
-
-  void ParseStar();
-
-  void ParsePlus();
-
-  void ParseOpt();
-
-  void ParseLeftParen();
-
-  void ParseRightParen();
+  void Parse(const std::string &s);
 
   // (DEBUG)
   const NFA &GetNFA() const { return nfa_; }
 
-  void DoEndJob();
+  // (DEBUG)
+  const DFA &GetDFA() const { return dfa_; }
 
-  void DoAlternation();
+  bool Match(const std::string &s);
 
-  void DoConcatenation();
+ private:
+
+  void parseLiteral(char c);
+
+  void parseCharClass(const char *t);
+
+  void parseVerticalBar();
+
+  void parseStar();
+
+  void parsePlus();
+
+  void parseOpt();
+
+  void parseLeftParen();
+
+  void parseRightParen();
+
+  void doEndJob();
+
+  void doAlternation();
+
+  void doConcatenation();
 
  private:
 
   NFA nfa_;
+  DFA dfa_;
 
   std::stack<Regexp> stk_;
 };

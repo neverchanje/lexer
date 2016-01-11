@@ -78,10 +78,11 @@ class NFA {
  public:
 
   static const State START_STATE = 0;
+  static const State FINAL_STATE = 1;
 
   // NFA is created with a start state and a final state.
   NFA() :
-      maxStateId_(0) {
+      maxStateId_(1) {
   }
 
   // Construct the epsilon closure of the set of NFA states T, and return the

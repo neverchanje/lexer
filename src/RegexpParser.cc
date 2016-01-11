@@ -12,58 +12,58 @@ using std::unique_ptr;
 using std::stack;
 
 // RegexpParser::Parse is not support associativity currently, which will be done later.
-NFA &RegexpParser::Parse(const std::string &s) {
+void RegexpParser::Parse(const std::string &s) {
 
   for (size_t t = 0; t < s.length(); t++) {
     char c = s[t];
     switch (c) {
       case '[': {
-        ParseCharClass(s.data() + t);
+        parseCharClass(s.data() + t);
         break;
       }
       case '(': {
-        ParseLeftParen();
+        parseLeftParen();
         break;
       }
       case ')': {
-        ParseRightParen();
+        parseRightParen();
         break;
       }
       case '|': {
-        ParseVerticalBar();
+        parseVerticalBar();
         break;
       }
       case '*': {
-        ParseStar();
+        parseStar();
         break;
       }
       case '+': {
-        ParsePlus();
+        parsePlus();
         break;
       }
       case '?': {
-        ParseOpt();
+        parseOpt();
         break;
       }
       default: {
         // literal character
-        ParseLiteral(c);
+        parseLiteral(c);
         break;
       }
     }
   }
 
-  DoEndJob();
-  return nfa_;
+  doEndJob();
+  dfa_ = nfa_.ToDFA();
 }
 
-void RegexpParser::ParseLiteral(char c) {
+void RegexpParser::parseLiteral(char c) {
   NFA::Machine m(nfa_.MakeState(), nfa_.MakeState());
   nfa_.AddTrans(m.start, c, m.final);
   stk_.push(Regexp(m, OpCode::NONE));
 }
 
-void RegexpParser::ParseCharClass(const char *t) {
+void RegexpParser::parseCharClass(const char *t) {
   CharClass ccl;
   for (; (*t) != ']' && (*t) != '\0'; t++) {
     ccl.Add(*t);
@@ -76,12 +76,12 @@ void RegexpParser::ParseCharClass(const char *t) {
 }
 
 // this algorithm doesn't take adjacent vertical bars "||" in to consideration.
-void RegexpParser::ParseVerticalBar() {
+void RegexpParser::parseVerticalBar() {
 
   stk_.push(Regexp(NFA::Machine(), OpCode::ALTERNATE));
 }
 
-void RegexpParser::ParseStar() {
+void RegexpParser::parseStar() {
   assert(!stk_.empty());
   NFA::Machine m = stk_.top().mach;
   stk_.pop();
@@ -89,7 +89,7 @@ void RegexpParser::ParseStar() {
   stk_.push(Regexp(m, OpCode::NONE));
 }
 
-void RegexpParser::ParsePlus() {
+void RegexpParser::parsePlus() {
   assert(!stk_.empty());
   NFA::Machine m = stk_.top().mach;
   stk_.pop();
@@ -97,7 +97,7 @@ void RegexpParser::ParsePlus() {
   stk_.push(Regexp(m, OpCode::NONE));
 }
 
-void RegexpParser::ParseOpt() {
+void RegexpParser::parseOpt() {
   assert(!stk_.empty());
   NFA::Machine m = stk_.top().mach;
   stk_.pop();
@@ -105,25 +105,26 @@ void RegexpParser::ParseOpt() {
   stk_.push(Regexp(m, OpCode::NONE));
 }
 
-void RegexpParser::ParseLeftParen() {
+void RegexpParser::parseLeftParen() {
   stk_.push(Regexp(NFA::Machine(), OpCode::LEFT_PAREN));
 }
 
 // When a right parenthesis is hit, the stack must be in the form of
 // ... LeftParen Regex VerticalBar Regex VerticalBar ... Regex, or only
 // a LeftParen.
-void RegexpParser::ParseRightParen() {
-  DoConcatenation();
-  DoAlternation();
+void RegexpParser::parseRightParen() {
+  doConcatenation();
+  doAlternation();
 }
 
-void RegexpParser::DoEndJob() {
-  DoConcatenation();
-  DoAlternation();
+void RegexpParser::doEndJob() {
+  doConcatenation();
+  doAlternation();
   nfa_.AddTrans(nfa_.START_STATE, NFA::SYM_EPSILON, stk_.top().mach.start);
+  nfa_.AddTrans(stk_.top().mach.final, NFA::SYM_EPSILON, nfa_.FINAL_STATE);
 }
 
-void RegexpParser::DoAlternation() {
+void RegexpParser::doAlternation() {
   if (stk_.empty()) {
     return;
   }
@@ -149,7 +150,7 @@ void RegexpParser::DoAlternation() {
   stk_.push(Regexp(m, OpCode::NONE));
 }
 
-void RegexpParser::DoConcatenation() {
+void RegexpParser::doConcatenation() {
   if (stk_.empty()) {
     return;
   }
@@ -168,6 +169,17 @@ void RegexpParser::DoConcatenation() {
     stk_.pop();
   }
   stk_.push(Regexp(m, OpCode::NONE));
+}
+
+bool RegexpParser::Match(const std::string &s) {
+  DFA::State st = DFA::START_STATE;
+  for (char c : s) {
+    auto optTo = dfa_.GetTrans(st, c);
+    if (!optTo)
+      return false;
+    st = (*optTo);
+  }
+  return dfa_.IsAccept(st);
 }
 
 } // namespace lexer

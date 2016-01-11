@@ -9,13 +9,11 @@
 
 using namespace lexer;
 
-typedef NFA::Machine Machine;
-
 // TODO: use a better hasher
 struct StateSetHasher {
   size_t operator()(const NFA::StateSet &val) const {
     std::vector<NFA::State> arr(val.begin(), val.end());
-    std::sort(arr.begin(), arr.end());
+    std::sort(arr.begin(), arr.end()); // boost::hash_value doesn't support hashing unordered container.
     return boost::hash_value(arr);
   }
 };
@@ -70,6 +68,9 @@ DFA NFA::ToDFA() const {
     unmarked.pop_back();
 
     const StateSet &T = findInDStates(table, Tid);
+    if (T.find(State(FINAL_STATE)) != T.end()) {
+      dfa.AddAccept(Tid);
+    }
 
     getAllSymsFromT(symlist, T);
 
@@ -145,7 +146,7 @@ void NFA::Dump() const {
   fprintf(stderr, "------- Ending of dumping the NFA. -------\n");
 }
 
-Machine NFA::MakeOpt(const Machine &mach) {
+NFA::Machine NFA::MakeOpt(const NFA::Machine &mach) {
   State start = MakeState();
   State final = MakeState();
   AddTrans(start, SYM_EPSILON, mach.start);
@@ -154,7 +155,7 @@ Machine NFA::MakeOpt(const Machine &mach) {
   return Machine(start, final);
 }
 
-Machine NFA::MakeOr(const Machine &first, const Machine &second) {
+NFA::Machine NFA::MakeOr(const NFA::Machine &first, const NFA::Machine &second) {
 // it doesn't make sense to create a self-loop with epsilon.
   if (first.start != second.start)
     AddTrans(first.start, SYM_EPSILON, second.start);
@@ -163,7 +164,7 @@ Machine NFA::MakeOr(const Machine &first, const Machine &second) {
   return first;
 }
 
-Machine NFA::MakeClosure(const Machine &mach) {
+NFA::Machine NFA::MakeClosure(const NFA::Machine &mach) {
   State start = MakeState();
   State final = MakeState();
   AddTrans(start, SYM_EPSILON, mach.start);
@@ -173,7 +174,7 @@ Machine NFA::MakeClosure(const Machine &mach) {
   return Machine(start, final);
 }
 
-Machine NFA::MakePosClosure(const Machine &mach) {
+NFA::Machine NFA::MakePosClosure(const NFA::Machine &mach) {
   State start = MakeState();
   State final = MakeState();
   AddTrans(start, SYM_EPSILON, mach.start);

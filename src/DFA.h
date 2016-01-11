@@ -5,8 +5,10 @@
 #ifndef LEXER_DFA_H
 #define LEXER_DFA_H
 
-#include "DisallowCopying.h"
 #include <unordered_map>
+#include <unordered_set>
+#include <boost/optional/optional.hpp>
+#include "DisallowCopying.h"
 
 namespace lexer {
 
@@ -25,7 +27,6 @@ class DFA {
 
   // DFA is created with a start state.
   DFA() :
-      start_(START_STATE),
       maxStateId_(1) {
   }
 
@@ -39,7 +40,10 @@ class DFA {
 
   bool HasTrans(State from, SymbolID sym) const;
 
-  State GetTrans(State, SymbolID sym) const;
+  boost::optional<State> GetTrans(State, SymbolID sym) const;
+
+  inline void AddAccept(State acc) { accepts_.insert(acc); }
+  inline bool IsAccept(State st) const { return accepts_.find(st) != accepts_.end(); }
 
  public:
 
@@ -57,7 +61,7 @@ class DFA {
 
   std::unordered_map<State, std::unordered_map<SymbolID, State> > trans_;
 
-  State start_;
+  std::unordered_set<State> accepts_;
 
   int maxStateId_;
 

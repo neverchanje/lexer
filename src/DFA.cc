@@ -22,8 +22,15 @@ bool DFA::HasTrans(State from, SymbolID sym) const {
   return (t1.find(sym) != t1.end());
 }
 
-State DFA::GetTrans(State from, SymbolID sym) const {
-  return trans_.find(from)->second.find(sym)->second;
+boost::optional<State> DFA::GetTrans(State from, SymbolID sym) const {
+  auto found1 = trans_.find(from);
+  if (found1 == trans_.end())
+    return boost::none;
+
+  auto found2 = found1->second.find(sym);
+  if (found2 == found1->second.end())
+    return boost::none;
+  return found2->second;
 }
 
 void DFA::Dump() const {
